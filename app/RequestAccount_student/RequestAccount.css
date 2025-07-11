@@ -1,0 +1,32 @@
+.Registration_container {
+  background: linear-gradient(to bottom, #667eea, #764ba2);
+  min-height: 100vh;
+  padding: 40px 10px 60px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  max-width: 1200px;
+  margin: 0 auto;
+  color: #333;
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 1rem 0;
+  margin: 1rem 0 2rem;
+  border-radius: 16px;
+}
+
+.logo h1 {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
