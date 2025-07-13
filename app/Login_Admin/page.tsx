@@ -16,7 +16,7 @@ export default function LoginAdminPage() {
 
           <div id="loginAlert" className="alert hidden"></div>
 
-          <form id="studentLoginForm">
+          <form id="AdminLoginForm">
             <div className="form-group">
               <label htmlFor="email"> Email</label>
               <input type="email" id="email" name="email" required />
