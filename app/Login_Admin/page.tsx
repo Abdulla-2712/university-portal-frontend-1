@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import './Login.css';
 
-export default function LoginOrRequestStudentPage() {
+export default function LoginAdminPage() {
   return (
     <div className="Login-container">
       <header className="header">
