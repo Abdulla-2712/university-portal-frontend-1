@@ -23,14 +23,17 @@ export default function Home() {
 
   </div>
 
+  
   <div className="role-card">
     <span role="img" aria-label="admin">👨‍💼</span>
     <h3>Admin</h3>
+    
    <Link href="/Login_Admin" className="btn btn-primary">
-  Access Admin Portal
+  Access Admin Portal 
 </Link>
 
   </div>
+
 </div>
 
     </div>

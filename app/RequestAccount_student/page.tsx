@@ -66,26 +66,28 @@ export default function LoginOrRequestStudentPage() {
                   <option value="ai">Multi media</option>
                 </select>
               </div>
-            <div className="form-group">
-              <label htmlFor="myFile" style={{ display: 'block', marginBottom: '8px', fontWeight: 600 }}>
-                Upload Profile Picture
-              </label>
+              {/*
+              <div className="form-group">
+                <label htmlFor="myFile" style={{ display: 'block', marginBottom: '8px', fontWeight: 600 }}>
+                  Upload ID card
+                </label>
 
-              {/* Hidden real file input */}
-              <input
-                type="file"
-                id="myFile"
-                name="filename"
-                accept="image/*"
-                onChange={handleFileChange}
-                style={{ display: 'none' }}
-              />
+                <input
+                  type="file"
+                  id="myFile"
+                  name="filename"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  style={{ display: 'none' }}
+                  required 
+                />
 
-              {/* Custom button to trigger file input */}
-              <label htmlFor="myFile" className="btn" style={{ display: 'inline-block', cursor: 'pointer' }}>
-                {selectedFileName ? selectedFileName : 'Choose file'}
-              </label>
-            </div>
+                <label htmlFor="myFile" className="btn" style={{ display: 'inline-block', cursor: 'pointer' }}>
+                  {selectedFileName ? selectedFileName : 'Choose file'}
+                </label>
+              </div>
+              */}
+
 
             <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
               Login
