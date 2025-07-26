@@ -17,7 +17,7 @@ export default function Home() {
     <span role="img" aria-label="student">👨‍🎓</span>
     <h3>Student</h3>
     
-    <Link href="/LoginOrRequest_student" className="btn btn-primary">
+    <Link href="/login_student" className="btn btn-primary">
   Access Student Portal
 </Link>
 
@@ -28,7 +28,7 @@ export default function Home() {
     <span role="img" aria-label="admin">👨‍💼</span>
     <h3>Admin</h3>
     
-   <Link href="/Login_Admin" className="btn btn-primary">
+   <Link href="/login_admin" className="btn btn-primary">
   Access Admin Portal 
 </Link>
 

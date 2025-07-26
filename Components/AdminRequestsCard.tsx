@@ -1,29 +1,94 @@
 // components/TrackingCompsCard.jsx
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { responseCookiesToRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
 
 
-
-
+const add_user_URL = "http://127.0.0.1:8001/api/add_user"
 
 export default function AdminRequestsCard({requests}){
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [loading, setLoading] = useState(false); // Add loading state
   const {
-        id,
-        FullName,
-        AcademicEmail,
-        SeatNumber,
-        Level,
-        dateSubmitted,
-        Department,
+    id,
+    FullName,
+    PhoneNumber,
+    AcademicEmail,
+    SeatNumber,
+    Level,
+    Department,
   } = requests
-
-
-
-
-  function handleAccept(){
+  function getDeleteUrl(id) {
+    return `http://127.0.0.1:8001/api/delete_request/${requests.id}`;
   }
 
-  function handleReject() {
+  async function handleAccept(event){
+    event.preventDefault();   
+    const requestData = {
+      name: requests.FullName,
+      email: requests.AcademicEmail,
+      phone_number: requests.PhoneNumber,
+      Seat_Number: requests.SeatNumber,
+      level: requests.Level,
+      department: requests.Department
+    };
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+      'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestData),
+    };
+    try {
+      const response = await fetch(add_user_URL, requestOptions);
+      const rData = await response.json();
+      if(response.ok){
+        setError(null);
+        setSuccess("Request successful! Redirecting...");
+        setTimeout(() => {
+        }, 3000);
+        handleDelete(requests.id);
+      }
+      else{
+        if (response.status === 409) {
+          setError("An account with this data already exists.");
+        } else if (response.status === 404) {
+          setError("Server not found. Please try again later.");
+        } else {
+          setError(rData.error || "Something went wrong.");
+        }
+        setSuccess(null);
+      }
+    }
+    catch (err){
+      console.error("Login error:", err);
+      setError("Network error. Please check your connection.");
+      setSuccess(null);
+    }
+    finally {
+      setLoading(false); // Reset loading state
+    }
   }
+
+const handleDelete = async (id: number) => {
+  try {
+    const res = await fetch(`http://127.0.0.1:8001/api/delete_request/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to delete');
+    }
+
+    console.log('Deleted successfully');
+    // Optionally update your state to remove the deleted item
+  } catch (error) {
+    console.error('Delete error:', error);
+  }
+};
+
 
   return (
     <div className="card">
@@ -34,18 +99,20 @@ export default function AdminRequestsCard({requests}){
       </div>
       <div className="card-body">
         <p><strong>Academic Email:</strong> {AcademicEmail}</p>
+        <p><strong>Phone Number:</strong> {PhoneNumber}</p>
         <p><strong>Seat Number:</strong> {SeatNumber}</p>
         <p><strong>Department:</strong> {Department}</p>
         <p><strong>Level:</strong> {Level}</p>
-        <p><strong>Date Submitted:</strong> {new Date(dateSubmitted).toLocaleDateString()}</p>
         <div className="flex gap-4 mt-4">
           <button className="btn btn-primary" onClick={handleAccept}>
           Accept
           </button>
-          <button className="btn btn-secondary" onClick={handleReject}>
+          <button className="btn btn-secondary" onClick={() => handleDelete(requests.id)}>
           Reject
           </button>
         </div>
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            {success && <p style={{ color: "green" }}>{success}</p>}
       </div>
     </div>
 

@@ -1,49 +1,136 @@
-export default function TabOne() {
+'use client'
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation';
+import { jwtDecode } from 'jwt-decode';
+import Link from 'next/link';
+
+const add_comp_URL = "http://127.0.0.1:8001/api/compsuggs/submit_complaint"
+
+export default function UserComplaints({decoded}){
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [studentID, setStudentID] = useState(null);
+
+  async function adding_complaint(event){
+    event.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+
+    const formData = new FormData(event.target);
+    const formObject = Object.fromEntries(formData);
+    
+    // Fixed: Map priority level values correctly
+    let priorityValue = formObject.prioritylevel;
+    if (priorityValue === 'cs') priorityValue = 'Urgent';
+    if (priorityValue === 'it') priorityValue = 'Normal';
+    
+    const requestData = {
+      department: formObject.department,
+      subject: formObject.subject,
+      complaint_content: formObject.complaint_content,
+      priority_level: priorityValue, // Fixed: Use mapped value
+      student: parseInt(decoded.id), // Fixed: Ensure it's an integer
+    };
+
+    console.log('Sending request data:', requestData); // Debug log
+
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestData),
+    };
+
+    try{
+      const response = await fetch(add_comp_URL, requestOptions);
+      const rData = await response.json();
+
+      console.log('Response status:', response.status); // Debug log
+      console.log('Response data:', rData); // Debug log
+
+      if(response.ok){
+        setError(null);
+        setSuccess("Complaint submitted successfully!");
+        event.target.reset(); // Reset form on success
+      }
+      else{
+          if (response.status === 409) {
+              setError("A complaint with this data already exists.");
+          } else if (response.status === 404) {
+              setError("Server not found. Please try again later.");
+          } else if (response.status === 422){
+              setError(rData.detail || rData.error || "Validation error occurred.");
+          } else if (response.status === 400){
+              setError(rData.detail || rData.error || "Bad request. Please check your input.");
+          } else{
+              setError(rData.detail || rData.error || "Something went wrong.");
+          }
+          setSuccess(null);
+      }
+    }
+    catch(error){
+      console.error("Submission error:", error);
+      setError("Network error. Please check your connection.");
+      setSuccess(null);
+    }
+    finally{
+      setLoading(false);
+    }
+  }
 
   return (
     <div>
-      <div className="form-group">
-                <label htmlFor="department">Department</label>
-                <select id="department" name="department" required>
-                  <option value="">-- Select Department --</option>
-                  <option value="cs">Computer Science</option>
-                  <option value="it">Information Technology</option>
-                  <option value="se">Information Software</option>
-                  <option value="ai">Multi media</option>
-                </select>
-              </div>
+      <form id="studentRequestForm" onSubmit={adding_complaint}>
+        <div className="form-group">
+          <label htmlFor="department">Department</label>
+          <select id="department" name="department" required>
+            <option value="">-- Select Department --</option>
+            <option value="Computer Science">Computer Science</option>
+            <option value="Information Technology">Information Technology</option>
+            <option value="Software Engineering">Software Engineering</option>
+            <option value="Multimedia">Multimedia</option>
+          </select>
+        </div>
 
-              <div className="form-group">
-                <label htmlFor="subject">Subject</label>
-                <input type="text" id="subject" name="subject" required />
-              </div>
+        <div className="form-group">
+          <label htmlFor="subject">Subject</label>
+          <input type="text" id="subject" name="subject" required />
+        </div>
 
+        <div className="form-group">
+          <label htmlFor="complaint_content">Description</label>
+          <textarea 
+            id="complaint_content" 
+            name="complaint_content" 
+            required 
+            placeholder="Please provide detailed information about your complaint..."
+          ></textarea>
+        </div>
 
-              <div className="form-group">
-                <label form="complaintDescription">Description</label>
-                <textarea id="complaintDescription" name="description" required 
-                  placeholder="Please provide detailed information about your complaint..."></textarea>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="prioritylevel">Priority Level</label>
-                <select id="prioritylevel" name="prioritylevel" required>
-                  <option value="">-- Select Priority Level --</option>
-                  <option value="cs">Urgent</option>
-                  <option value="it">Normal</option>
-                </select>
-              </div>
-              <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
-                Submit
-              </button>
-
-  </div>
-              
-
-
-
-
-
-
+        <div className="form-group">
+          <label htmlFor="prioritylevel">Priority Level</label>
+          <select id="prioritylevel" name="prioritylevel" required>
+            <option value="">-- Select Priority Level --</option>
+            <option value="Urgent">Urgent</option>
+            <option value="Normal">Normal</option>
+          </select>
+        </div>
+        
+        <button 
+          type="submit" 
+          className="btn btn-primary" 
+          style={{ width: '100%' }}
+          disabled={loading}
+        >
+          {loading ? 'Submitting...' : 'Submit'}
+        </button>
+      </form>
+      
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {success && <p style={{ color: "green" }}>{success}</p>}
+    </div>
   );
 }

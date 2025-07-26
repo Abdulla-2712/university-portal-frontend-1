@@ -1,61 +1,86 @@
-
-
 'use client'
 import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import AdminRequestsCard from './AdminRequestsCard'
 import RespondModal from '@/Components/Modals/RespondModal'
+const add_user_URL = "http://127.0.0.1:8001/api/add_user"
 
 
 export default function AdminRequests() {
-  const [requests, setRequests] = useState([])
-  const [isOpen, setIsOpen] = useState(false)
-  const [fullName, setFullName] = useState("");
-  const [academicEmail, setAcademicEmail] = useState("");
-  const [seatNumber, setSeatNumber] = useState("");
-  const [level, setLevel] = useState("");
-  const [department, setDepartment] = useState("");
-
+  const [requests, setRequests] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // TODO: Replace with Django fetch later
-    const mockData = [
-      {
-        id: 1,
-        FullName: 'Abdulla Omar',
-        AcademicEmail: 'aabdula2712@gmail.com',
-        SeatNumber: '162022160',
-        Level: 'Third Level',
-        dateSubmitted: '2025-07-14',
-        Department: 'Computer Science',
-      },
-      {
-        id: 2,
-        FullName: 'Abdulla Omar',
-        AcademicEmail: 'aabdula2712@gmail.com',
-        SeatNumber: 162022160,
-        Level: 'Third Level',
-        dateSubmitted: '2025-07-14',
-        Department: 'Information Technology',
-      },
-    ]
-    setRequests(mockData)
-  }, [])
+    fetch("http://127.0.0.1:8001/api/get_all_requests")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch requests");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setRequests(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching requests:", error);
+      });
+  }, []);
 
-const handleAddUser = () => {
-  const newUser = {
-    FullName: fullName,
-    AcademicEmail: academicEmail,
-    SeatNumber: seatNumber,
-    Level: level,
-    dateSubmitted: new Date().toISOString(),
-    Department: department,
-    status: "accepted", // optional but clear
+async function adding_user(event){
+  event.preventDefault();   
+  setLoading(true);
+  setError(null);
+  const formData = new FormData(event.target);
+  const formObject = Object.fromEntries(formData);
+  const requestData = {
+      name: formObject.fullName,
+      email: formObject.academicEmail,
+      phone_number: formObject.phoneNumber,
+      Seat_Number: formObject.seatNumber,
+      level: formObject.level,
+      department: formObject.department,
   };
+  const requestOptions = {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestData),
+  };
+    try {
+      const response = await fetch(add_user_URL, requestOptions);
+      const rData = await response.json();
 
-  console.log("Adding user:", newUser);
-  setIsOpen(false);
-};
-
+      if(response.ok){
+        setError(null);
+        setSuccess("Request successful! Redirecting...");
+        setTimeout(() => {
+        }, 3000);
+      }
+      else{
+          if (response.status === 409) {
+              setError("An account with this data already exists.");
+          } else if (response.status === 404) {
+              setError("Server not found. Please try again later.");
+          } else {
+              setError(rData.error || "Something went wrong.");
+          }
+          setSuccess(null);
+      }
+  }
+  catch (err){
+      console.error("Login error:", err);
+      setError("Network error. Please check your connection.");
+      setSuccess(null);
+  }
+  finally {
+      setLoading(false); // Reset loading state
+  }
+}
 
 
 
@@ -70,66 +95,74 @@ const handleAddUser = () => {
         ))
       )}
 
+
       <div className="flex justify-center">
-      <button className="btn btn-primary" onClick={() => setIsOpen(true)}>
+        <button className="btn btn-primary" onClick={() => setIsOpen(true)}>
           Add user
-      </button>
-        </div>
+        </button>
+      </div>
+
+
+      
       <RespondModal handleClose={() => setIsOpen(false)} isOpen={isOpen}>
-        <div className="form-group">
+    <div className="form-group">
           
                   
         <h1 className="text-3xl font-bold">Add a new account</h1>
-      
-              
+      <form id="studentRequestForm" onSubmit={adding_user}>
           <div className="form-group">
-              <label htmlFor="fullName">Full Name</label>
-              <input type="text" id="fullName" name="fullName" required value={fullName} onChange={(e) => setFullName(e.target.value)} />
-          </div>
+                <label htmlFor="fullName">Full Name</label>
+                <input type="text" id="fullName" name="fullName" required />
+              </div>
 
-          <div className="form-group">
-            <label htmlFor="academicEmail">Academic Email</label>
-            <input type="email" value={academicEmail} onChange={(e) => setAcademicEmail(e.target.value)} />
-          </div>
+              <div className="form-group">
+                <label htmlFor="academicEmail">Academic Email</label>
+                <input type="email" id="academicEmail" name="academicEmail" required />
+              </div>
 
-          <div className="form-group">
-            <label htmlFor="seatNumber">Seat Number</label>
-            <input type="text" value={seatNumber} onChange={(e) => setSeatNumber(e.target.value)} />
-          </div>
+              <div className="form-group">
+                <label htmlFor="phoneNumber">Phone Number</label>
+                <input type="text" id="phoneNumber" name="phoneNumber" required />
+              </div>
 
 
-          <div className="form-group">
-            <label htmlFor="Level">Level</label>
-            <select value={level} onChange={(e) => setLevel(e.target.value)}>
-              <option value="">-- Select your level --</option>
-              <option value="cs">First level</option>
-              <option value="it">Second level Technology</option>
-              <option value="se">Third level</option>
-              <option value="ai">Fourth level</option>
-            </select>
-          </div>              
-          
+              <div className="form-group">
+                <label htmlFor="seatNumber">Seat Number</label>
+                <input type="text" id="seatNumber" name="seatNumber" required />
+              </div>
+
+
+              <div className="form-group">
+                <label htmlFor="level">Level</label>
+                <select id="level" name="level" required>
+                  <option value="">-- Select your level --</option>
+                  <option value="First Level">First level</option>
+                  <option value="Second Level">Second level</option>
+                  <option value="Third Level">Third level</option>
+                  <option value="FOurth Level">Fourth level</option>
+                </select>
+              </div>   
+
+
+
           <div className="form-group">
             <label htmlFor="department">Department</label>
-          <select value={department} onChange={(e) => setDepartment(e.target.value)} >
+            <select id="department" name="department" required>
               <option value="">-- Select Department --</option>
-              <option value="cs">Computer Science</option>
-              <option value="it">Information Technology</option>
-              <option value="se">Information Software</option>
-              <option value="ai">Multi media</option>
+              <option value="Information Technology">Information Technology</option>
+              <option value="Computer Science">Computer Science</option>
+              <option value="Information Software">Information Software</option>
+              <option value="Multi media">Multi media</option>
             </select>
           </div>
-        
-        
-        
-        
-        
         <div className="flex justify-center">
-          <button className="btn btn-primary" onClick={handleAddUser}>
+          <button className="btn btn-primary">
           Confirm
           </button>
         </div>
-
+      </form>
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            {success && <p style={{ color: "green" }}>{success}</p>}
       </div>
       </RespondModal>
 
