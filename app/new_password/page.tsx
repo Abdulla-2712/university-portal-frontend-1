@@ -21,7 +21,7 @@ export default function newPassword() {
         setLoading(true); // Set loading to true when starting login
         setError(null); // Clear previous errors
         if(!checkPassword(event)){
-          setError("password doesn't match");
+          setError("Passwords doesn't match");
           setLoading(false);
           return;
         }
@@ -46,7 +46,7 @@ export default function newPassword() {
                 const token = rData.token;
                 localStorage.setItem('token', token);
                 setError(null);
-                setSuccess("Password added successfully, you can log in now...");
+                setSuccess("Password added successfully, you can login now...");
 
                 // Add a small delay to show success message
                 setTimeout(() => {
@@ -55,7 +55,7 @@ export default function newPassword() {
             }
             else{
                 if(response.status == 400){
-                  setError(rData.error || "Invalid or expired token");
+                  setError(rData.error || "Password must be at least 8 characters.<br>Password must include at least one uppercase letter.<br>Password must include at least one lowercase letter.<br>Password must include at least one digit.<br>Password must include at least one special character.");
                 }
                 else{
                   setError(rData.error || "Login failed");
@@ -118,7 +118,7 @@ export default function newPassword() {
 
           <div className="text-center mt-3">
           </div>
-            {error && <p style={{ color: "red" }}>{error}</p>}
+            {error && (<p style={{ color: "red" }} dangerouslySetInnerHTML={{ __html: error }}/>)}
             {success && <p style={{ color: "green" }}>{success}</p>}
         </div>
       </main>

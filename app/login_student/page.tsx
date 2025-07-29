@@ -46,8 +46,12 @@ export default function login_student() {
                 }, 1000);
             }
             else{
-                setError(rData.error || "Login failed");
-                setSuccess(null);
+                if(response.status == 404 || response.status == 401){
+                    setError(rData.error || "Email or password is wrong");
+                }else{
+                    setError(rData.error || "Login failed");
+                    setSuccess(null);
+                }
             }
         }
         catch (err){

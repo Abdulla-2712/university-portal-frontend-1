@@ -46,8 +46,12 @@ export default function Login_Admin() {
                 }, 1000);
             }
             else{
-                setError(rData.error || "Login failed");
-                setSuccess(null);
+                if(response.status == 404){
+                  setError(rData.error || "Email or password is wrong");
+                }else{
+                  setError(rData.error || "Login failed");
+                  setSuccess(null);
+                }
             }
         }
         catch (err){
