@@ -91,7 +91,11 @@ async function adding_user(event){
         <p>No complaints submitted yet.</p>
       ) : (
         requests.map((requests) => (
-          <AdminRequestsCard key={requests.id} requests={requests} />
+          <AdminRequestsCard key={requests.id} requests={requests}
+            onDelete={(id) => {
+              setRequests(prev => prev.filter(requests => requests.id !== id));
+            }}
+        />
         ))
       )}
 

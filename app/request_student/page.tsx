@@ -164,7 +164,7 @@ export default function RequestAccount() {
 
 
             <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
-              Login
+              Request account
             </button>
           </form>
             {error && <p style={{ color: "red" }}>{error}</p>}

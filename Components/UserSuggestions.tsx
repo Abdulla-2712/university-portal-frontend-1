@@ -1,34 +1,109 @@
-export default function TabTwo() {
+'use client'
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation';
+import { jwtDecode } from 'jwt-decode';
+import Link from 'next/link';
+
+const add_suggs_URL = "http://127.0.0.1:8001/api/compsuggs/submit_suggestion"
+
+export default function userSuggestions({decoded}) {
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [studentID, setStudentID] = useState(null);
+  
+
+  async function adding_suggestion(event){
+    event.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+
+    const formData = new FormData(event.target);
+    const formObject = Object.fromEntries(formData);
+    const requestData = {
+      department: formObject.department,
+      subject: formObject.subject,
+      suggestion_content: formObject.suggestion_content,
+      student: parseInt(decoded.id),
+    }
+    const requestOptions = {
+      method:'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestData)
+    };
+    try{
+      const response = await fetch(add_suggs_URL, requestOptions);
+      const rData = await response.json();
+      if(response.ok){
+        setError(null);
+        setSuccess("Suggestion submitted successfully");
+        event.target.reset();
+      }
+      else{
+          if (response.status === 409) {
+              setError("A complaint with this data already exists.");
+          } else if (response.status === 404) {
+              setError("Server not found. Please try again later.");
+          } else if (response.status === 422){
+              setError(rData.detail || rData.error || "Validation error occurred.");
+          } else if (response.status === 400){
+              setError(rData.detail || rData.error || "Bad request. Please check your input.");
+          } else{
+              setError(rData.detail || rData.error || "Something went wrong.");
+          }
+          setSuccess(null);
+      }
+    }
+    catch(error){
+      console.error("Submission error:", error);
+      setError("Network error. Please check your connection.");
+      setSuccess(null);
+    }
+    finally{
+      setLoading(false);
+    }
+
+  }
+
+
+
 
   return (
     <div>
+      <form id="studentRequestForm" onSubmit={adding_suggestion}>
       <div className="form-group">
-                <label htmlFor="department">Department</label>
-                <select id="department" name="department" required>
-                  <option value="">-- Select Department --</option>
-                  <option value="cs">Computer Science</option>
-                  <option value="it">Information Technology</option>
-                  <option value="se">Information Software</option>
-                  <option value="ai">Multi media</option>
-                </select>
-              </div>
+        <label htmlFor="department">Department</label>
+        <select id="department" name="department" required>
+          <option value="">-- Select Department --</option>
+          <option value="Computer Science">Computer Science</option>
+          <option value="Information Technology">Information Technology</option>
+          <option value="Software Engineering">Software Engineering</option>
+          <option value="Multimedia">Multimedia</option>
+        </select>
+      </div>
 
-              <div className="form-group">
-                <label htmlFor="subject">Subject</label>
-                <input type="text" id="subject" name="subject" required />
-              </div>
+      <div className="form-group">
+        <label htmlFor="subject">Subject</label>
+        <input type="text" id="subject" name="subject" required />
+      </div>
 
 
-              <div className="form-group">
-                <label form="complaintDescription">Description</label>
-                <textarea id="complaintDescription" name="description" required 
-                  placeholder="Please provide detailed information about your suggestion..."></textarea>
-              </div>
+      <div className="form-group">
+        <label form="suggestion_content">Description</label>
+        <textarea id="suggestion_content" name="suggestion_content" required 
+          placeholder="Please provide detailed information about your suggestion..."></textarea>
+      </div>
 
-              <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
-                Submit
-              </button>
-              
+      <button 
+        type="submit" className="btn btn-primary" style={{ width: '100%' }} disabled={loading}>
+        {loading ? 'Submitting...' : 'Submit'}
+      </button>
+    </form>
+    {error && <p style={{ color: "red" }}>{error}</p>}
+    {success && <p style={{ color: "green" }}>{success}</p>}    
   </div>
               
 

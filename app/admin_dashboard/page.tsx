@@ -35,7 +35,7 @@ export default function TabsPage() {
             
             // Extract student name from token if available
             if (decoded.name || decoded.email) {
-                setAdminName(decoded.name);
+                setAdminName(decoded.email.split('@', 1));
             }
             
             setAuthorized(true);
@@ -77,7 +77,7 @@ export default function TabsPage() {
                 <div>
                     <h2>Student Dashboard</h2>
                     <p>Welcome, <span id="AdminName">{AdminName}</span></p>
-                </div>ComplaintsUserTab
+                </div>
 
           <button className="btn btn-primary" onClick={handleLogout}>
             Logout

@@ -7,8 +7,8 @@ export default function TrackingCompsCard({ complaint }) {
     department,
     subject,
     priority_level,
-    complaint_content,
-    complaint_answer,
+    content,
+    answer = '',
     status,
   } = complaint
 
@@ -24,9 +24,11 @@ export default function TrackingCompsCard({ complaint }) {
       </div>
       <div className="card-body">
         <p><strong>Department:</strong> {department}</p>
-        <p><strong>Priority:</strong> {priority_level}</p>
-        <p><strong>Description:</strong> {complaint_content}</p>
-        {complaint_answer && (
+        {priority_level && (
+          <p><strong>Property Level:</strong> {priority_level}</p>
+        )}
+        <p><strong>Description:</strong> {content}</p>
+        {answer && (
           <div style={{
             marginTop: '1rem',
             padding: '1rem',
@@ -34,7 +36,7 @@ export default function TrackingCompsCard({ complaint }) {
             borderRadius: '5px'
           }}>
             <strong>Response:</strong><br />
-            {complaint_answer}
+            {answer}
           </div>
         )}
       </div>

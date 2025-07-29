@@ -86,13 +86,7 @@ export default function login_student() {
 
                         <div className="form-group">
                             <label htmlFor="password">Password</label>
-                            <input 
-                                type="password" 
-                                id="password" 
-                                name="password" 
-                                required 
-                                disabled={loading}
-                            />
+                                <input type="password" id="password" name="password" autoComplete="new-password" required />
                         </div>
 
                         <button 

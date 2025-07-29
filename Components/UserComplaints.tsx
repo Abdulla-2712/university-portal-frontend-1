@@ -21,16 +21,12 @@ export default function UserComplaints({decoded}){
     const formData = new FormData(event.target);
     const formObject = Object.fromEntries(formData);
     
-    // Fixed: Map priority level values correctly
-    let priorityValue = formObject.prioritylevel;
-    if (priorityValue === 'cs') priorityValue = 'Urgent';
-    if (priorityValue === 'it') priorityValue = 'Normal';
     
     const requestData = {
       department: formObject.department,
       subject: formObject.subject,
       complaint_content: formObject.complaint_content,
-      priority_level: priorityValue, // Fixed: Use mapped value
+      priority_level: formObject.prioritylevel, // Fixed: Use mapped value
       student: parseInt(decoded.id), // Fixed: Ensure it's an integer
     };
 

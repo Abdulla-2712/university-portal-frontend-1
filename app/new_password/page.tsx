@@ -1,53 +1,66 @@
 "use client"
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import './forgotPassword.css';
+import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+import './newPassword.css';
 
-const LOGIN_URL = "http://127.0.0.1:8001/api/login_admin"
+const Request_URL = "http://127.0.0.1:8001/api/new_password"
 
-export default function Login_Admin() {
+export default function newPassword() {
 
- const [error, setError] = useState(null);
+    const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
-    const [loading, setLoading] = useState(false); // Add loading state
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
-
-    async function handleLogin(event) {
+    const searchParams = useSearchParams();
+    const token = searchParams.get('token');
+    async function handleReset(event) {
         event.preventDefault();   
         setLoading(true); // Set loading to true when starting login
         setError(null); // Clear previous errors
-
+        if(!checkPassword(event)){
+          setError("password doesn't match");
+          setLoading(false);
+          return;
+        }
         const formData = new FormData(event.target);
         const objectsfromentries = Object.fromEntries(formData);
-        const json = JSON.stringify(objectsfromentries);
+        const sentPassword = {
+          token,
+          password: objectsfromentries.password
+        }
         const requestOptions = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: json,
+            body: JSON.stringify(sentPassword)
         };
-        
         try {
-            const response = await fetch(LOGIN_URL, requestOptions);
+            const response = await fetch(Request_URL, requestOptions);
             const rData = await response.json();
 
             if(response.ok){
                 const token = rData.token;
                 localStorage.setItem('token', token);
                 setError(null);
-                setSuccess("Login successful! Redirecting...");
-                
+                setSuccess("Password added successfully, you can log in now...");
+
                 // Add a small delay to show success message
                 setTimeout(() => {
-                    router.push('/admin_dashboard');
+                    router.push('/login_student');
                 }, 1000);
             }
             else{
-                setError(rData.error || "Login failed");
-                setSuccess(null);
+                if(response.status == 400){
+                  setError(rData.error || "Invalid or expired token");
+                }
+                else{
+                  setError(rData.error || "Login failed");
+                  setSuccess(null);
+                }
             }
         }
         catch (err){
@@ -60,7 +73,13 @@ export default function Login_Admin() {
         }
     }
 
+    function checkPassword(event){
 
+      const formData = new FormData(event.target);
+      const formObject = Object.fromEntries(formData);
+      const compareValue = formObject.password.localeCompare(formObject.passwordConfirmation);
+      return compareValue === 0;
+    }
 
 
 
@@ -71,7 +90,7 @@ export default function Login_Admin() {
     <div className="Login-container">
       <header className="header">
         <div className="logo">
-          <h1>🎓 Your account has been accepted</h1>
+          <h1>🎓 University Portal</h1>
         </div>
       </header>
 
@@ -81,7 +100,7 @@ export default function Login_Admin() {
 
           <div id="loginAlert" className="alert hidden"></div>
 
-          <form id="studentLoginForm" onSubmit={handleLogin}>
+          <form id="studentLoginForm" onSubmit={handleReset}>
             <div className="form-group">
               <label htmlFor="password"> Enter a new password:</label>
               <input type="password" id="password" name="password" required />
@@ -89,7 +108,7 @@ export default function Login_Admin() {
 
             <div className="form-group">
               <label htmlFor="passwordConfirmation">Enter your password again:</label>
-              <input type="password" id="passwordConfirmation" name="passwordConfirmation" required />
+              <input type="password" id="passwordConfirmation" name="passwordConfirmation" autoComplete='new-password' required />
             </div>
 
             <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
@@ -99,8 +118,8 @@ export default function Login_Admin() {
 
           <div className="text-center mt-3">
           </div>
-                                  {error && <p style={{ color: "red" }}>{error}</p>}
-                        {success && <p style={{ color: "green" }}>{success}</p>}
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            {success && <p style={{ color: "green" }}>{success}</p>}
         </div>
       </main>
     </div>

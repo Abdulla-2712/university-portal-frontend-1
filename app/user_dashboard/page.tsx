@@ -54,13 +54,12 @@ export default function TabsPage() {
     const renderContent = () => {
         switch (activeTab) {
             case 1: return <UserComplaints decoded= {decodedToken}/>;
-            case 2: return <UserSuggestions />;
+            case 2: return <UserSuggestions decoded= {decodedToken}/>;
             case 3: return <UserTracking />;
-            case 4: return <div>Chat Support - Coming Soon</div>; // Added case 4
+            case 4: return <div>Chat Support - Coming Soon</div>;
             default: return null;
         }
     };
-
     if (!authorized) {
         return (
             <div style={{ 

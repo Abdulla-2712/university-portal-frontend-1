@@ -13,9 +13,8 @@ export default function ComplaintsTab() {
     if (!token) {
       return;
     }
-
-
-    fetch("http://127.0.0.1:8001/api/compsuggs/get_all_comps",{
+    fetch("http://127.0.0.1:8001/api/compsuggs/get_user_compsuggs",{
+      
         method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -34,6 +33,7 @@ export default function ComplaintsTab() {
     .catch((error) => {
       console.error("Error fetching requests:", error);
     });
+
   }, []);
 
   return (

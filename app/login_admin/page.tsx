@@ -89,7 +89,7 @@ export default function Login_Admin() {
 
             <div className="form-group">
               <label htmlFor="password">Password</label>
-              <input type="password" id="password" name="password" required />
+              <input type="password" id="password" name="password" autoComplete="new-password" required />
             </div>
 
             <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>

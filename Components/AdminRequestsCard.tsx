@@ -7,10 +7,11 @@ import { responseCookiesToRequestCookies } from 'next/dist/server/web/spec-exten
 
 const add_user_URL = "http://127.0.0.1:8001/api/add_user"
 
-export default function AdminRequestsCard({requests}){
+export default function AdminRequestsCard({requests, onDelete}){
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [loading, setLoading] = useState(false); // Add loading state
+  const [loading, setLoading] = useState(false);
+  
   const {
     id,
     FullName,
@@ -46,19 +47,15 @@ export default function AdminRequestsCard({requests}){
       const rData = await response.json();
       if(response.ok){
         setError(null);
-        setSuccess("Request successful! Redirecting...");
+        setSuccess("Account added successfully");
         setTimeout(() => {
-        }, 3000);
-        handleDelete(requests.id);
+          setSuccess(null);
+          handleDelete(requests.id);
+
+        }, 2000);
       }
       else{
-        if (response.status === 409) {
-          setError("An account with this data already exists.");
-        } else if (response.status === 404) {
-          setError("Server not found. Please try again later.");
-        } else {
-          setError(rData.error || "Something went wrong.");
-        }
+        setError(rData.error || "Something went wrong.");
         setSuccess(null);
       }
     }
@@ -81,12 +78,14 @@ const handleDelete = async (id: number) => {
     if (!res.ok) {
       throw new Error('Failed to delete');
     }
-
-    console.log('Deleted successfully');
-    // Optionally update your state to remove the deleted item
-  } catch (error) {
-    console.error('Delete error:', error);
+      if (onDelete) {
+        onDelete(id); // tell the parent to remove this card
+      }
+      } catch (error) {
+        setError("Network error. Please check your connection.");
+        console.error('Delete error:', error);
   }
+
 };
 
 
