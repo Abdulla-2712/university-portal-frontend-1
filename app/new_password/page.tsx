@@ -3,12 +3,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 import './newPassword.css';
 
 const Request_URL = "http://127.0.0.1:8001/api/new_password"
 
-export default function newPassword() {
+export default function New_Password() {
 
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
@@ -112,7 +111,7 @@ export default function newPassword() {
             </div>
 
             <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
-              Confirm
+              {loading ? "loading..." : "Confirm"}
             </button>
           </form>
 

@@ -8,7 +8,7 @@ import './Login.css';
 
 const LOGIN_URL = "http://127.0.0.1:8001/api/login_student"
 
-export default function login_student() {
+export default function Login_Student() {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [loading, setLoading] = useState(false); // Add loading state
@@ -105,7 +105,7 @@ export default function login_student() {
 
                     <div className="text-center mt-3">
                         <p>
-                            Don't have an account?{' '}
+                            Don&apos;t have an account?{' '}
                             <Link href="/request_student">Request Account</Link>
                         </p>
                         <p>

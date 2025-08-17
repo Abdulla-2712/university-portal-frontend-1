@@ -1,13 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import './RequestAccount.css';
 const Request_URL = "http://127.0.0.1:8001/api/submit_request"
 
 
-export default function RequestAccount() {
+export default function Request_Account() {
       const [error, setError] = useState(null);
       const [success, setSuccess] = useState(null);
       const [loading, setLoading] = useState(false); // Add loading state
@@ -164,7 +163,7 @@ export default function RequestAccount() {
 
 
             <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
-              Request account
+              {loading ? "loading" : "Request account"}
             </button>
           </form>
             {error && <p style={{ color: "red" }}>{error}</p>}

@@ -97,7 +97,7 @@ export default function Login_Admin() {
             </div>
 
             <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
-              Login
+              {loading ? "loging in..." : "login"}
             </button>
           </form>
 
@@ -106,8 +106,8 @@ export default function Login_Admin() {
               <Link href="/">← Back to Home</Link>
             </p>
           </div>
-                                  {error && <p style={{ color: "red" }}>{error}</p>}
-                        {success && <p style={{ color: "green" }}>{success}</p>}
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            {success && <p style={{ color: "green" }}>{success}</p>}
         </div>
       </main>
     </div>
