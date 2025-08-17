@@ -1,25 +1,40 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
-import { jwtDecode, JwtPayload } from 'jwt-decode'; // Fixed import name
-import UserComplaints from '@/Components/UserComplaints';
-import UserSuggestions from '@/Components/UserSuggestions';
-import UserTracking from '@/Components/UserTracking';
-
+import { jwtDecode, JwtPayload } from 'jwt-decode';
+import dynamic from 'next/dynamic';
 import './userD.css';
+
+// Dynamic imports to prevent SSR issues
+const UserComplaints = dynamic(() => import('@/Components/UserComplaints'), {
+  loading: () => <div>Loading complaints...</div>,
+  ssr: false
+});
+
+const UserSuggestions = dynamic(() => import('@/Components/UserSuggestions'), {
+  loading: () => <div>Loading suggestions...</div>,
+  ssr: false
+});
+
+const UserTracking = dynamic(() => import('@/Components/UserTracking'), {
+  loading: () => <div>Loading tracking...</div>,
+  ssr: false
+});
+
 interface MyJwtPayload extends JwtPayload {
   name?: string;
   email?: string;
 }
-export default function User_Dashboard() {
+
+function DashboardContent() {
   const [authorized, setAuthorized] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<number>(1);
-    const [studentName, setStudentName] = useState('Student');
-    const [decodedToken, setDecodedToken] = useState<JwtPayload | null>(null);
-    const router = useRouter();
+  const [studentName, setStudentName] = useState('Student');
+  const [decodedToken, setDecodedToken] = useState<JwtPayload | null>(null);
+  const router = useRouter();
 
-useEffect(() => {
+  useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       router.push("/login_student");
@@ -48,93 +63,109 @@ useEffect(() => {
     }
   }, [router]);
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    router.push('/login_student');
+  };
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        router.push('/login_student');
-    };
+  const renderContent = () => {
+    const user = decodedToken ? { id: decodedToken.sub! } : { id: 0 };
 
-    
-const renderContent = () => {
-  const user = decodedToken ? { id: decodedToken.sub! } : { id: 0 }; // default id
-
-  switch (activeTab) {
-    case 1: return <UserComplaints decoded={user} />;
-    case 2: return <UserSuggestions decoded={user} />;
-    case 3: return <UserTracking />;
-    case 4: return <div>Chat Support - Coming Soon</div>;
-    default: return null;
-  }
-};
-
-    if (!authorized) {
-        return (
-            <div style={{ 
-                display: 'flex', 
-                justifyContent: 'center', 
-                alignItems: 'center', 
-                height: '100vh',
-                fontSize: '18px'
-            }}>
-                Checking authorization...
-            </div>
-        );
+    switch (activeTab) {
+      case 1: return <UserComplaints decoded={user} />;
+      case 2: return <UserSuggestions decoded={user} />;
+      case 3: return <UserTracking />;
+      case 4: return <div>Chat Support - Coming Soon</div>;
+      default: return null;
     }
+  };
 
+  if (!authorized) {
     return (
-        <div className="container">
-            <div className="dashboard-header">
-                <div>
-                    <h2>Student Dashboard</h2>
-                    <p>Welcome, <span id="studentName">{studentName}</span></p>
-                </div>
-                <button className="btn btn-primary" onClick={handleLogout}>
-                    Logout
-                </button>
-            </div>
-
-            <div className="tab-buttons">
-                <nav className="dashboard-nav">
-                    <ul className="nav-tabs">
-                        <li className="nav-tab">
-                            <button
-                                className={`nav-button ${activeTab === 1 ? 'active' : ''}`} // Fixed class name
-                                onClick={() => setActiveTab(1)}
-                            >
-                                Submit Complaint
-                            </button>
-                        </li>
-                        <li className="nav-tab">
-                            <button
-                                className={`nav-button ${activeTab === 2 ? 'active' : ''}`}
-                                onClick={() => setActiveTab(2)}
-                            >
-                                Submit Suggestion
-                            </button>
-                        </li>
-                        <li className="nav-tab">
-                            <button
-                                className={`nav-button ${activeTab === 3 ? 'active' : ''}`}
-                                onClick={() => setActiveTab(3)}
-                            >
-                                Track Complaints
-                            </button>
-                        </li>
-                        <li className="nav-tab">
-                            <button
-                                className={`nav-button ${activeTab === 4 ? 'active' : ''}`}
-                                onClick={() => setActiveTab(4)}
-                            >
-                                Chat Support
-                            </button>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-
-            <div className="tab-content">
-                {renderContent()}
-            </div>
-        </div>
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        fontSize: '18px'
+      }}>
+        Checking authorization...
+      </div>
     );
+  }
+
+  return (
+    <div className="container">
+      <div className="dashboard-header">
+        <div>
+          <h2>Student Dashboard</h2>
+          <p>Welcome, <span id="studentName">{studentName}</span></p>
+        </div>
+        <button className="btn btn-primary" onClick={handleLogout}>
+          Logout
+        </button>
+      </div>
+
+      <div className="tab-buttons">
+        <nav className="dashboard-nav">
+          <ul className="nav-tabs">
+            <li className="nav-tab">
+              <button
+                className={`nav-button ${activeTab === 1 ? 'active' : ''}`}
+                onClick={() => setActiveTab(1)}
+              >
+                Submit Complaint
+              </button>
+            </li>
+            <li className="nav-tab">
+              <button
+                className={`nav-button ${activeTab === 2 ? 'active' : ''}`}
+                onClick={() => setActiveTab(2)}
+              >
+                Submit Suggestion
+              </button>
+            </li>
+            <li className="nav-tab">
+              <button
+                className={`nav-button ${activeTab === 3 ? 'active' : ''}`}
+                onClick={() => setActiveTab(3)}
+              >
+                Track Complaints
+              </button>
+            </li>
+            <li className="nav-tab">
+              <button
+                className={`nav-button ${activeTab === 4 ? 'active' : ''}`}
+                onClick={() => setActiveTab(4)}
+              >
+                Chat Support
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <div className="tab-content">
+        {renderContent()}
+      </div>
+    </div>
+  );
+}
+
+export default function TabsPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        fontSize: '18px'
+      }}>
+        Loading dashboard...
+      </div>
+    }>
+      <DashboardContent />
+    </Suspense>
+  );
 }
