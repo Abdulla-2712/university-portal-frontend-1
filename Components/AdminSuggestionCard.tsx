@@ -3,8 +3,8 @@
 import React, { useState } from 'react'
 import RespondModal from '@/Components/Modals/RespondModal'
 
-const stat_URL = "http://127.0.0.1:8001/api/compsuggs/change_status_sugs"
-const answer_URL = "http://127.0.0.1:8001/api/compsuggs/answer_suggestion"
+const stat_URL = "https://university-portal-backend-production.up.railway.app/api/compsuggs/change_status_sugs"
+const answer_URL = "https://university-portal-backend-production.up.railway.app/api/compsuggs/answer_suggestion"
 
 
 type Suggestion = {

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { jwtDecode } from 'jwt-decode';
 import Link from 'next/link';
 
-const add_comp_URL = "http://127.0.0.1:8001/api/compsuggs/submit_complaint"
+const add_comp_URL = "https://university-portal-backend-production.up.railway.app/api/compsuggs/submit_complaint"
 
 interface DecodedProps {
   decoded: {

@@ -1,7 +1,7 @@
 // components/TrackingCompsCard.jsx
 import React, { useEffect, useState } from 'react'
 
-const add_user_URL = "http://127.0.0.1:8001/api/add_user"
+const add_user_URL = "https://university-portal-backend-production.up.railway.app/api/add_user"
 
 type Request = {
   id: number;
@@ -33,7 +33,7 @@ export default function AdminRequestsCard({requests, onDelete}: AdminRequestsCar
     Department,
   } = requests
   function getDeleteUrl() {
-    return `http://127.0.0.1:8001/api/delete_request/${requests.id}`;
+    return `https://university-portal-backend-production.up.railway.app/api/delete_request/${requests.id}`;
   }
 
   async function handleAccept(event: React.MouseEvent<HTMLButtonElement>){
@@ -82,7 +82,7 @@ export default function AdminRequestsCard({requests, onDelete}: AdminRequestsCar
 
 const handleDelete = async (id: number) => {
   try {
-    const res = await fetch(`http://127.0.0.1:8001/api/delete_request/${id}`, {
+    const res = await fetch(`https://university-portal-backend-production.up.railway.app/api/delete_request/${id}`, {
       method: 'DELETE',
     });
 

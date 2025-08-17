@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Request } from './types'
 import AdminRequestsCard from './AdminRequestsCard'
 import RespondModal from '@/Components/Modals/RespondModal'
-const add_user_URL = "http://127.0.0.1:8001/api/add_user"
+const add_user_URL = "https://university-portal-backend-production.up.railway.app/api/add_user"
 
 
 
@@ -17,7 +17,7 @@ export default function AdminRequests() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8001/api/get_all_requests")
+    fetch("https://university-portal-backend-production.up.railway.app/api/get_all_requests")
       .then((res) => {
         if (!res.ok) {
           throw new Error("Failed to fetch requests");

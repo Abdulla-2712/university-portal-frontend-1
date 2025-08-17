@@ -11,7 +11,7 @@ export default function ComplaintsTab() {
     if (!token) {
       return;
     }
-    fetch("http://127.0.0.1:8001/api/compsuggs/get_user_compsuggs",{
+    fetch("https://university-portal-backend-production.up.railway.app/api/compsuggs/get_user_compsuggs",{
       
         method: "GET",
       headers: {

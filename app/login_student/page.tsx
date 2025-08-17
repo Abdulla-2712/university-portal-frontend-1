@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 import './Login.css';
 
-const LOGIN_URL = "http://127.0.0.1:8001/api/login_student"
+const LOGIN_URL = "https://university-portal-backend-production.up.railway.app/api/login_student"
 
 export default function Login_Student() {
     const [error, setError] = useState<string | null>(null);

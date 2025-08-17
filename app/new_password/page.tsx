@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import './newPassword.css';
 
-const Request_URL = "http://127.0.0.1:8001/api/new_password"
+const Request_URL = "https://university-portal-backend-production.up.railway.app/api/new_password"
 
 // Separate component that uses useSearchParams
 function NewPasswordForm() {

@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import RespondModal from '@/Components/Modals/RespondModal'
 import { Complaint } from './types'
 
-const stat_URL = "http://127.0.0.1:8001/api/compsuggs/change_status_comp"
-const answer_URL = "http://127.0.0.1:8001/api/compsuggs/answer_complaint"
+const stat_URL = "https://university-portal-backend-production.up.railway.app/api/compsuggs/change_status_comp"
+const answer_URL = "https://university-portal-backend-production.up.railway.app/api/compsuggs/answer_complaint"
 
 export default function AdminComplaintsCard({ complaint }: { complaint: Complaint }) {
   const {

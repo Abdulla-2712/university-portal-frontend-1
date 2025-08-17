@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 
-const add_suggs_URL = "http://127.0.0.1:8001/api/compsuggs/submit_suggestion"
+const add_suggs_URL = "https://university-portal-backend-production.up.railway.app/api/compsuggs/submit_suggestion"
 
 interface DecodedProps {
   decoded: {

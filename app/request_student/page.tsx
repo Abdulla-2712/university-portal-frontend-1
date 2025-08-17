@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import './RequestAccount.css';
-const Request_URL = "http://127.0.0.1:8001/api/submit_request"
+const Request_URL = "https://university-portal-backend-production.up.railway.app/api/submit_request"
 
 
 export default function Request_Account() {

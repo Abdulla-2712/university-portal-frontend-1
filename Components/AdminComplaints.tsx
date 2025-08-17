@@ -11,7 +11,7 @@ export default function ComplaintsAdminTab() {
     if(!token){
       return;
     }
-    fetch("http://127.0.0.1:8001/api/compsuggs/get_admin_comps", {
+    fetch("https://university-portal-backend-production.up.railway.app/api/compsuggs/get_admin_comps", {
       method: 'GET',
       headers: {
         "Content-Type": "application/json",
