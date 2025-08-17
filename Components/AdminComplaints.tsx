@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import AdminComplaintsCard from './AdminComplaintsCard'
 
 export default function ComplaintsAdminTab() {
-  const [complaints, setComplaints] = useState([])
+const [complaints, setComplaints] = useState<Complaint[]>([])
 
   useEffect(() => {
     const token = localStorage.getItem('token');
