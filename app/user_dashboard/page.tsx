@@ -14,8 +14,8 @@ interface MyJwtPayload extends JwtPayload {
   email?: string;
 }
 export default function TabsPage() {
-    const [authorized, setAuthorized] = useState(false);
-    const [activeTab, setActiveTab] = useState(1);
+  const [authorized, setAuthorized] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<number>(1);
     const [studentName, setStudentName] = useState('Student');
     const [decodedToken, setDecodedToken] = useState<JwtPayload | null>(null);
     const router = useRouter();
@@ -48,7 +48,7 @@ useEffect(() => {
       router.push("/login_student");
     }
   }, [router]);
-}
+
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -56,15 +56,18 @@ useEffect(() => {
     };
 
     
-    const renderContent = () => {
-        switch (activeTab) {
-            case 1: return <UserComplaints decoded= {decodedToken}/>;
-            case 2: return <UserSuggestions decoded= {decodedToken}/>;
-            case 3: return <UserTracking />;
-            case 4: return <div>Chat Support - Coming Soon</div>;
-            default: return null;
-        }
-    };
+const renderContent = () => {
+  const user = decodedToken ? { id: decodedToken.sub! } : { id: 0 }; // default id
+
+  switch (activeTab) {
+    case 1: return <UserComplaints decoded={user} />;
+    case 2: return <UserSuggestions decoded={user} />;
+    case 3: return <UserTracking />;
+    case 4: return <div>Chat Support - Coming Soon</div>;
+    default: return null;
+  }
+};
+
     if (!authorized) {
         return (
             <div style={{ 

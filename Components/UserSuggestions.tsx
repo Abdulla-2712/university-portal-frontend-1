@@ -8,7 +8,7 @@ const add_suggs_URL = "http://127.0.0.1:8001/api/compsuggs/submit_suggestion"
 
 interface DecodedProps {
   decoded: {
-    id: number;
+    id: number | string;
     // add other properties if needed
   };
 }
