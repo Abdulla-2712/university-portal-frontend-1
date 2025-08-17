@@ -59,7 +59,7 @@ async function adding_user(event: React.FormEvent<HTMLFormElement>){
 
       if(response.ok){
         setError(null);
-        setSuccess("Request successful! Redirecting...");
+        setSuccess("User added successfuly!");
         setTimeout(() => {
         }, 3000);
       }
@@ -115,58 +115,115 @@ async function adding_user(event: React.FormEvent<HTMLFormElement>){
           
                   
         <h1 className="text-3xl font-bold">Add a new account</h1>
-      <form id="studentRequestForm" onSubmit={adding_user}>
-          <div className="form-group">
-                <label htmlFor="fullName">Full Name</label>
-                <input type="text" id="fullName" name="fullName" required />
-              </div>
+                 <form className="registration-form" onSubmit={adding_user}>
+                <div className="form-group">
+                  <label htmlFor="fullName">Full Name</label>
+                  <div className="input-wrapper">
+                    <input
+                      type="text"
+                      id="fullName"
+                      name="fullName"
+                      placeholder="Enter your full name"
+                      required
+                      disabled={loading}
+                      className={loading ? 'loading' : ''}
+                    />
+                  </div>
+                </div>
 
-              <div className="form-group">
-                <label htmlFor="academicEmail">Academic Email</label>
-                <input type="email" id="academicEmail" name="academicEmail" required />
-              </div>
+                <div className="form-group">
+                  <label htmlFor="academicEmail">Academic Email</label>
+                  <div className="input-wrapper">
+                    <input
+                      type="email"
+                      id="academicEmail"
+                      name="academicEmail"
+                      placeholder="your.email@university.edu"
+                      required
+                      disabled={loading}
+                      className={loading ? 'loading' : ''}
+                    />
+                  </div>
+                </div>
 
-              <div className="form-group">
-                <label htmlFor="phoneNumber">Phone Number</label>
-                <input type="text" id="phoneNumber" name="phoneNumber" required />
-              </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="phoneNumber">Phone Number</label>
+                    <div className="input-wrapper">
+                      <input
+                        type="text"
+                        id="phoneNumber"
+                        name="phoneNumber"
+                        placeholder="Your phone number"
+                        required
+                        disabled={loading}
+                        className={loading ? 'loading' : ''}
+                      />
+                    </div>
+                  </div>
 
+                  <div className="form-group">
+                    <label htmlFor="seatNumber">Seat Number</label>
+                    <div className="input-wrapper">
+                      <input
+                        type="text"
+                        id="seatNumber"
+                        name="seatNumber"
+                        placeholder="Your seat number"
+                        required
+                        disabled={loading}
+                        className={loading ? 'loading' : ''}
+                      />
+                    </div>
+                  </div>
+                </div>
 
-              <div className="form-group">
-                <label htmlFor="seatNumber">Seat Number</label>
-                <input type="text" id="seatNumber" name="seatNumber" required />
-              </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="level">Level</label>
+                    <div className="input-wrapper">
+                      <select id="level" name="level" required disabled={loading}>
+                        <option value="">-- Select your level --</option>
+                        <option value="First Level">First level</option>
+                        <option value="Second Level">Second level</option>
+                        <option value="Third Level">Third level</option>
+                        <option value="Fourth Level">Fourth level</option>
+                      </select>
+                    </div>
+                  </div>
 
+                  <div className="form-group">
+                    <label htmlFor="department">Department</label>
+                    <div className="input-wrapper">
+                      <select id="department" name="department" required disabled={loading}>
+                        <option value="">-- Select Department --</option>
+                        <option value="Information Technology">Information Technology</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Information Software">Information Software</option>
+                        <option value="Multi media">Multi media</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
 
-              <div className="form-group">
-                <label htmlFor="level">Level</label>
-                <select id="level" name="level" required>
-                  <option value="">-- Select your level --</option>
-                  <option value="First Level">First level</option>
-                  <option value="Second Level">Second level</option>
-                  <option value="Third Level">Third level</option>
-                  <option value="FOurth Level">Fourth level</option>
-                </select>
-              </div>   
-
-
-
-          <div className="form-group">
-            <label htmlFor="department">Department</label>
-            <select id="department" name="department" required>
-              <option value="">-- Select Department --</option>
-              <option value="Information Technology">Information Technology</option>
-              <option value="Computer Science">Computer Science</option>
-              <option value="Information Software">Information Software</option>
-              <option value="Multi media">Multi media</option>
-            </select>
-          </div>
-        <div className="flex justify-center">
-          <button className="btn btn-primary">
-          Confirm
-          </button>
-        </div>
-      </form>
+                <button
+                  type="submit"
+                  className={`btn btn-primary ${loading ? 'loading' : ''}`}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <span className="btn-spinner"></span>
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <span>Request Account</span>
+                      <span className="btn-arrow">→</span>
+                    </>
+                  )}
+                </button>
+              </form>
             {error && <p style={{ color: "red" }}>{error}</p>}
             {success && <p style={{ color: "green" }}>{success}</p>}
       </div>

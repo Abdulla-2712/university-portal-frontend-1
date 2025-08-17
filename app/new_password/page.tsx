@@ -143,10 +143,6 @@ function NewPasswordForm() {
                             <strong style={{ color: '#374151', fontSize: '0.95rem' }}>Password Requirements:</strong>
                             <ul>
                                 <li>At least 8 characters long</li>
-                                <li>One uppercase letter (A-Z)</li>
-                                <li>One lowercase letter (a-z)</li>
-                                <li>One number (0-9)</li>
-                                <li>One special character (!@#$%^&*)</li>
                             </ul>
                         </div>
 
