@@ -27,7 +27,7 @@ export default function TabsPage() {
             const decoded = jwtDecode(token); // Fixed function name
             setDecodedToken(decoded);
             // Fixed expiration check - added missing parentheses
-            if (decoded.exp * 1000 < Date.now()) {
+            if (!decoded.exp || decoded.exp * 1000 < Date.now()) {
                 localStorage.removeItem('token');
                 router.push('/login_student');
                 return;

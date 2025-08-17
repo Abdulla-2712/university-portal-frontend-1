@@ -7,8 +7,8 @@ const Request_URL = "http://127.0.0.1:8001/api/submit_request"
 
 
 export default function Request_Account() {
-      const [error, setError] = useState(null);
-      const [success, setSuccess] = useState(null);
+      const [error, setError] = useState<string | null>(null);
+      const [success, setSuccess] = useState<string | null>(null);
       const [loading, setLoading] = useState(false); // Add loading state
       const router = useRouter();
   

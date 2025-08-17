@@ -21,8 +21,8 @@ export default function adminSuggestionsCard({ suggestion }) {
     const [stat, setStat] = useState(status)
     const [isOpen, setIsOpen] = useState(false)
     const [reply, setReply] = useState(suggestion_answer || "");
-    const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(null);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
     const [loading, setLoading] = useState(false); // Add loading state
     const token = localStorage.getItem('token');
     if (!token) {

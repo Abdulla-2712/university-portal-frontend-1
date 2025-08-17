@@ -24,20 +24,29 @@ export default function TabsPage() {
         }
         
         try {
-            const decoded = jwtDecode(token); // Fixed function name
-            
-            // Fixed expiration check - added missing parentheses
-            if (decoded.exp * 1000 < Date.now()) {
+            // Define a custom type for the decoded token
+            type AdminJwtPayload = {
+                exp?: number;
+                name?: string;
+                email?: string;
+            };
+
+            const decoded = jwtDecode<AdminJwtPayload>(token);
+
+            // Fixed expiration check - added missing parentheses and undefined check
+            if (!decoded.exp || decoded.exp * 1000 < Date.now()) {
                 localStorage.removeItem('token');
                 router.push('/login_admin');
                 return;
             }
-            
-            // Extract student name from token if available
-            if (decoded.name || decoded.email) {
-                setAdminName(decoded.email.split('@', 1));
+
+            // Extract admin name from token if available
+            if (decoded.name) {
+                setAdminName(decoded.name);
+            } else if (decoded.email) {
+                setAdminName(decoded.email.split('@')[0]);
             }
-            
+
             setAuthorized(true);
         } catch (err) {
             console.error('Token validation error:', err);

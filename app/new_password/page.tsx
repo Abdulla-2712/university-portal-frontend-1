@@ -9,8 +9,8 @@ const Request_URL = "http://127.0.0.1:8001/api/new_password"
 
 export default function New_Password() {
 
-    const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(null);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -72,11 +72,13 @@ export default function New_Password() {
         }
     }
 
-    function checkPassword(event){
+    function checkPassword(event: React.FormEvent<HTMLFormElement>){
 
-      const formData = new FormData(event.target);
+      const formData = new FormData(event.target as HTMLFormElement);
       const formObject = Object.fromEntries(formData);
-      const compareValue = formObject.password.localeCompare(formObject.passwordConfirmation);
+      const password = formObject.password as string;
+      const passwordConfirmation = formObject.passwordConfirmation as string;
+      const compareValue = password.localeCompare(passwordConfirmation);
       return compareValue === 0;
     }
 

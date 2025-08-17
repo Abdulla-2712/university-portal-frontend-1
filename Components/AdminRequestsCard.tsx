@@ -8,8 +8,8 @@ import { responseCookiesToRequestCookies } from 'next/dist/server/web/spec-exten
 const add_user_URL = "http://127.0.0.1:8001/api/add_user"
 
 export default function AdminRequestsCard({requests, onDelete}){
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   
   const {

@@ -7,8 +7,8 @@ import Link from 'next/link';
 const add_suggs_URL = "http://127.0.0.1:8001/api/compsuggs/submit_suggestion"
 
 export default function userSuggestions({decoded}) {
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [studentID, setStudentID] = useState(null);
   

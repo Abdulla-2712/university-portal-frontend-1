@@ -9,8 +9,8 @@ import './Login.css';
 const LOGIN_URL = "http://127.0.0.1:8001/api/login_student"
 
 export default function Login_Student() {
-    const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(null);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
     const [loading, setLoading] = useState(false); // Add loading state
     const router = useRouter();
 
