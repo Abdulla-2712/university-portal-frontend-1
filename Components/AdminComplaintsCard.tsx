@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import RespondModal from '@/Components/Modals/RespondModal'
+import { Complaint } from './types'
 
 const stat_URL = "http://127.0.0.1:8001/api/compsuggs/change_status_comp"
 const answer_URL = "http://127.0.0.1:8001/api/compsuggs/answer_complaint"
 
-export default function adminComplaintsCard({ complaint }) {
+export default function AdminComplaintsCard({ complaint }: { complaint: Complaint }) {
   const {
     id,
     subject,
@@ -17,86 +18,70 @@ export default function adminComplaintsCard({ complaint }) {
 
   const [stat, setStat] = useState(status)
   const [isOpen, setIsOpen] = useState(false)
-  const [reply, setReply] = useState(complaint_answer || "");
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-  const [loading, setLoading] = useState(false);
-    const token = localStorage.getItem('token');
-    if (!token) {
-      return;
+  const [reply, setReply] = useState(complaint_answer || "")
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
+  if (!token) return null
+
+  async function handlePending(event: React.MouseEvent<HTMLButtonElement>) {
+    event.preventDefault()
+    setLoading(true)
+    setError(null)
+    const request = {
+      id,
+      status: 'Reviewed'
     }
-
-  async function handlePending(event){
-        event.preventDefault();
-        setLoading(true);
-        setError(null);
-        const request = {
-            id: id,
-            status: 'Reviewed'
-        }
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(request)
-        }
-        try{
-            const response = await fetch(stat_URL, requestOptions);
-            const rData = await response.json();
-            if(response.ok){
-                setStat('Reviewed')
-            }
-            else{
-                setError(rData.error || "try again later");
-            }
-        }
-        catch(error){
-            setError("error, contact adminstrator");
-            setSuccess(null);
-        }
+    try {
+      const response = await fetch(stat_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(request),
+      })
+      const rData = await response.json()
+      if (response.ok) {
+        setStat('Reviewed')
+      } else {
+        setError(rData.error || "try again later")
+      }
+    } catch {
+      setError("error, contact administrator")
+      setSuccess(null)
     }
+  }
 
-
-
-
-    async function handleRespond(event){
-        event.preventDefault();
-        const formData = new FormData(event.target);
-        const objectFromEntries = Object.fromEntries(formData);
-        const request = {
-            id: id,
-            complaint_answer: objectFromEntries.complaint_answer,
-            status: 'Resolved'
-        }
-        setIsOpen(false);
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-
-            },
-                body: JSON.stringify(request)
-        }
-        try{
-            const response = await fetch(answer_URL, requestOptions);
-            const rData = await response.json();
-            if(response.ok){
-                setStat('Resolved');
-                setSuccess('Answer submited successfully....');
-            }
-            else{
-                setError(rData.error || "try again later");
-            }
-        } catch (error){
-            setError("error, contact adminstrator");
-            setSuccess(null);
-        }
-
+  async function handleRespond(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
+    const request = {
+      id,
+      complaint_answer: formData.get("complaint_answer"),
+      status: 'Resolved'
     }
-
-
+    setIsOpen(false)
+    try {
+      const response = await fetch(answer_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(request),
+      })
+      const rData = await response.json()
+      if (response.ok) {
+        setStat('Resolved')
+        setSuccess('Answer submitted successfully')
+      } else {
+        setError(rData.error || "try again later")
+      }
+    } catch {
+      setError("error, contact administrator")
+      setSuccess(null)
+    }
+  }
 
   return (
     <div className="card">
@@ -113,51 +98,44 @@ export default function adminComplaintsCard({ complaint }) {
         <p><strong>Priority:</strong> {priority_level}</p>
         <p><strong>Description:</strong> {complaint_content}</p>
         {complaint_answer && (
-          <div style={{
-            marginTop: '1rem',
-            padding: '1rem',
-            background: '#f8f9fa',
-            borderRadius: '5px'
-          }}>
+          <div className="bg-gray-100 rounded p-3 mt-3">
             <strong>Response:</strong><br />
             {complaint_answer}
           </div>
         )}
 
-
         {stat === 'Pending' && (
-        <button className="btn btn-warning" onClick={handlePending}>
+          <button className="btn btn-warning" onClick={handlePending}>
             Mark as read
-            </button>
+          </button>
         )}
 
-      {stat === 'Reviewed' && (
-        <button className="btn btn-warning" onClick={() => setIsOpen(true)}>
-          Respond
-        </button>
-      )}
-
-      <RespondModal handleClose={() => setIsOpen(false)} isOpen={isOpen}>
-        <div className="form-group">
-          <form id="studentLoginForm" onSubmit={handleRespond}>
-          <h1>Respond to complaint</h1>
-          <label htmlFor="complaint_answer">Response</label>
-        <textarea id="complaint_answer" name="complaint_answer" required   value={reply}   onChange={(e) => setReply(e.target.value)}></textarea>
-          <button className="btn btn-primary">
+        {stat === 'Reviewed' && (
+          <button className="btn btn-warning" onClick={() => setIsOpen(true)}>
             Respond
           </button>
+        )}
+
+        <RespondModal handleClose={() => setIsOpen(false)} isOpen={isOpen}>
+          <form onSubmit={handleRespond}>
+            <h1>Respond to complaint</h1>
+            <label htmlFor="complaint_answer">Response</label>
+            <textarea
+              id="complaint_answer"
+              name="complaint_answer"
+              required
+              value={reply}
+              onChange={(e) => setReply(e.target.value)}
+            />
+            <button className="btn btn-primary">Respond</button>
           </form>
-        </div>
-      </RespondModal>
+        </RespondModal>
 
-      {stat === 'Resolved' && (
-        <span className="text-green-600 font-semibold mt-2 inline-block">
-          This complaint has been resolved.
-        </span>
-
-      )}
-
-        
+        {stat === 'Resolved' && (
+          <span className="text-green-600 font-semibold mt-2 inline-block">
+            This complaint has been resolved.
+          </span>
+        )}
       </div>
     </div>
   )
