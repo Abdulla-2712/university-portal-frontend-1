@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState } from 'react'
-import { useRouter } from 'next/navigation';
 import RespondModal from '@/Components/Modals/RespondModal'
 
 const stat_URL = "http://127.0.0.1:8001/api/compsuggs/change_status_sugs"

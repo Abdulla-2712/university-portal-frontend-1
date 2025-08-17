@@ -8,7 +8,6 @@ import UserSuggestions from '@/Components/UserSuggestions';
 import UserTracking from '@/Components/UserTracking';
 
 import './userD.css';
-import router from 'next/router';
 interface MyJwtPayload extends JwtPayload {
   name?: string;
   email?: string;

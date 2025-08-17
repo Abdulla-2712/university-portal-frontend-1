@@ -1,8 +1,5 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation';
-import { jwtDecode } from 'jwt-decode';
-import Link from 'next/link';
 
 const add_suggs_URL = "http://127.0.0.1:8001/api/compsuggs/submit_suggestion"
 

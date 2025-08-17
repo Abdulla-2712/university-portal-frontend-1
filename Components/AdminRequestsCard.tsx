@@ -1,9 +1,5 @@
 // components/TrackingCompsCard.jsx
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { responseCookiesToRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
-
 
 const add_user_URL = "http://127.0.0.1:8001/api/add_user"
 

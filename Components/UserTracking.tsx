@@ -1,7 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import TrackingCompsCard from './UserTrackingCards'
-import { jwtDecode } from 'jwt-decode'; // Fixed import name
 import {Complaint} from './types';
 export default function ComplaintsTab() {
   const [complaints, setComplaints] = useState<Complaint[]>([]);
