@@ -1,6 +1,6 @@
 import "./modalStyles.css";
-
 import { ReactNode } from "react";
+import { createPortal } from "react-dom";
 
 interface RespondModalProps {
   children: ReactNode;
@@ -11,14 +11,15 @@ interface RespondModalProps {
 export default function RespondModal({ children, isOpen, handleClose }: RespondModalProps) {
   if (!isOpen) return null;
 
-  return (
-    <div className="modal">
-      <div className="modal-content">
-        <button onClick={handleClose} className="close-btn">
+  return createPortal(
+    <div className="modal" onClick={handleClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <button className="close-btn">
           ✕
         </button>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
