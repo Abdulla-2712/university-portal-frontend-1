@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import './RequestAccount.css';
+import Link from 'next/link';
 
 const Request_URL = "https://university-portal-backend-production.up.railway.app/api/submit_request";
 
@@ -220,11 +221,10 @@ export default function Request_Account() {
                   <span className="link-icon">🔑</span>
                   Sign In to Portal
                 </a>
-
-                <a href="/" className="link-secondary">
+                <Link href="/" className="link-secondary">
                   <span className="link-icon">←</span>
                   Back to Home
-                </a>
+                </Link>
               </div>
             </div>
           </div>
