@@ -2,55 +2,60 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { jwtDecode } from 'jwt-decode'; // Fixed import name
+import { jwtDecode, JwtPayload } from 'jwt-decode'; // Fixed import name
 import UserComplaints from '@/Components/UserComplaints';
 import UserSuggestions from '@/Components/UserSuggestions';
 import UserTracking from '@/Components/UserTracking';
 
 import './userD.css';
-
+import router from 'next/router';
+interface MyJwtPayload extends JwtPayload {
+  name?: string;
+  email?: string;
+}
 export default function TabsPage() {
     const [authorized, setAuthorized] = useState(false);
     const [activeTab, setActiveTab] = useState(1);
     const [studentName, setStudentName] = useState('Student');
-    const [decodedToken, setDecodedToken] = useState(null);
+    const [decodedToken, setDecodedToken] = useState<JwtPayload | null>(null);
     const router = useRouter();
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            router.push('/login_student');
-            return;
-        }
-        
-        try {
-            const decoded = jwtDecode(token); // Fixed function name
-            setDecodedToken(decoded);
-            // Fixed expiration check - added missing parentheses
-            if (!decoded.exp || decoded.exp * 1000 < Date.now()) {
-                localStorage.removeItem('token');
-                router.push('/login_student');
-                return;
-            }
-            
-            // Extract student name from token if available
-            if (decoded.name || decoded.email) {
-                setStudentName(decoded.name || decoded.email.split('@')[0]);
-            }
-            
-            setAuthorized(true);
-        } catch (err) {
-            console.error('Token validation error:', err);
-            localStorage.removeItem('token');
-            router.push('/login_student');
-        }
-    }, [router]);
+useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login_student");
+      return;
+    }
+
+    try {
+      const decoded: MyJwtPayload = jwtDecode<MyJwtPayload>(token);
+      setDecodedToken(decoded);
+
+      if (!decoded.exp || decoded.exp * 1000 < Date.now()) {
+        localStorage.removeItem("token");
+        router.push("/login_student");
+        return;
+      }
+
+      if (decoded.name || decoded.email) {
+        setStudentName(decoded.name || decoded.email!.split("@")[0]);
+      }
+
+      setAuthorized(true);
+    } catch (err) {
+      console.error("Token validation error:", err);
+      localStorage.removeItem("token");
+      router.push("/login_student");
+    }
+  }, [router]);
+}
 
     const handleLogout = () => {
         localStorage.removeItem('token');
         router.push('/login_student');
     };
 
+    
     const renderContent = () => {
         switch (activeTab) {
             case 1: return <UserComplaints decoded= {decodedToken}/>;
