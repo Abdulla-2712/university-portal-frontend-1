@@ -15,7 +15,7 @@ export default function New_Password() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const token = searchParams.get('token');
-    async function handleReset(event) {
+    async function handleReset(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();   
         setLoading(true); // Set loading to true when starting login
         setError(null); // Clear previous errors
@@ -24,7 +24,7 @@ export default function New_Password() {
           setLoading(false);
           return;
         }
-        const formData = new FormData(event.target);
+        const formData = new FormData(event.target as HTMLFormElement);
         const objectsfromentries = Object.fromEntries(formData);
         const sentPassword = {
           token,

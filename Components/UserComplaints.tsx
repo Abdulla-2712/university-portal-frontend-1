@@ -12,13 +12,13 @@ export default function UserComplaints({decoded}){
   const [loading, setLoading] = useState(false);
   const [studentID, setStudentID] = useState(null);
 
-  async function adding_complaint(event){
+  async function adding_complaint(event: React.FormEvent<HTMLFormElement>){
     event.preventDefault();
     setLoading(true);
     setError(null);
     setSuccess(null);
 
-    const formData = new FormData(event.target);
+    const formData = new FormData(event.target as HTMLFormElement);
     const formObject = Object.fromEntries(formData);
     
     

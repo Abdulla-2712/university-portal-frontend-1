@@ -12,12 +12,12 @@ export default function Request_Account() {
       const [loading, setLoading] = useState(false); // Add loading state
       const router = useRouter();
   
-      async function handleRequest(event) {
+      async function handleRequest(event: React.FormEvent<HTMLFormElement>) {
           event.preventDefault();   
           setLoading(true); // Set loading to true when starting login
           setError(null); // Clear previous errors
 
-          const formData = new FormData(event.target);
+          const formData = new FormData(event.target as HTMLFormElement);
           const formObject = Object.fromEntries(formData);
           const requestData = {
               name: formObject.fullName,

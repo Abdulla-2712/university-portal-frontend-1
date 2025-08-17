@@ -25,7 +25,7 @@ export default function AdminRequestsCard({requests, onDelete}){
     return `http://127.0.0.1:8001/api/delete_request/${requests.id}`;
   }
 
-  async function handleAccept(event){
+  async function handleAccept(event: React.FormEvent<HTMLFormElement>){
     event.preventDefault();   
     const requestData = {
       name: requests.FullName,

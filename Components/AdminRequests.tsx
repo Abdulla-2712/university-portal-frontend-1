@@ -30,11 +30,11 @@ export default function AdminRequests() {
       });
   }, []);
 
-async function adding_user(event){
+async function adding_user(event: React.FormEvent<HTMLFormElement>){
   event.preventDefault();   
   setLoading(true);
   setError(null);
-  const formData = new FormData(event.target);
+  const formData = new FormData(event.target as HTMLFormElement);
   const formObject = Object.fromEntries(formData);
   const requestData = {
       name: formObject.fullName,

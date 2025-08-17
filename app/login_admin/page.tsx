@@ -14,12 +14,12 @@ export default function Login_Admin() {
     const [loading, setLoading] = useState(false); // Add loading state
     const router = useRouter();
 
-    async function handleLogin(event) {
+    async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();   
         setLoading(true); // Set loading to true when starting login
         setError(null); // Clear previous errors
 
-        const formData = new FormData(event.target);
+        const formData = new FormData(event.target as HTMLFormElement);
         const objectsfromentries = Object.fromEntries(formData);
         const json = JSON.stringify(objectsfromentries);
         const requestOptions = {

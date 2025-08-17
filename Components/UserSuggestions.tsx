@@ -13,13 +13,13 @@ export default function userSuggestions({decoded}) {
   const [studentID, setStudentID] = useState(null);
   
 
-  async function adding_suggestion(event){
+  async function adding_suggestion(event: React.FormEvent<HTMLFormElement>){
     event.preventDefault();
     setLoading(true);
     setError(null);
     setSuccess(null);
 
-    const formData = new FormData(event.target);
+    const formData = new FormData(event.target as HTMLFormElement);
     const formObject = Object.fromEntries(formData);
     const requestData = {
       department: formObject.department,

@@ -29,7 +29,7 @@ export default function adminSuggestionsCard({ suggestion }) {
       return;
     }
 
-    async function handlePending(event){
+    async function handlePending(event: React.FormEvent<HTMLFormElement>){
         event.preventDefault();
         setLoading(true);
         setError(null);
@@ -63,9 +63,9 @@ export default function adminSuggestionsCard({ suggestion }) {
 
 
 
-    async function handleRespond(event){
+    async function handleRespond(event: React.FormEvent<HTMLFormElement>){
         event.preventDefault();
-        const formData = new FormData(event.target);
+        const formData = new FormData(event.target as HTMLFormElement);
         const objectFromEntries = Object.fromEntries(formData);
         const request = {
             id: id,
