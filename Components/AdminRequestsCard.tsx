@@ -36,11 +36,11 @@ export default function AdminRequestsCard({requests, onDelete}: AdminRequestsCar
     Level,
     Department,
   } = requests
-  function getDeleteUrl(id) {
+  function getDeleteUrl() {
     return `http://127.0.0.1:8001/api/delete_request/${requests.id}`;
   }
 
-  async function handleAccept(event: React.FormEvent<HTMLFormElement>){
+  async function handleAccept(event: React.MouseEvent<HTMLButtonElement>){
     event.preventDefault();   
     const requestData = {
       name: requests.FullName,

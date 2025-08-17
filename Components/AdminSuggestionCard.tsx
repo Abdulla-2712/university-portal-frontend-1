@@ -38,7 +38,7 @@ export default function adminSuggestionsCard({ suggestion }: { suggestion: Sugge
       return;
     }
 
-    async function handlePending(event: React.FormEvent<HTMLFormElement>){
+    async function handlePending(event: React.MouseEvent<HTMLButtonElement>){
         event.preventDefault();
         setLoading(true);
         setError(null);
