@@ -12,7 +12,7 @@ interface MyJwtPayload extends JwtPayload {
   name?: string;
   email?: string;
 }
-export default function TabsPage() {
+export default function User_Dashboard() {
   const [authorized, setAuthorized] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<number>(1);
     const [studentName, setStudentName] = useState('Student');
