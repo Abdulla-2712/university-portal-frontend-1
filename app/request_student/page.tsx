@@ -3,175 +3,233 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import './RequestAccount.css';
-const Request_URL = "https://university-portal-backend-production.up.railway.app/api/submit_request"
 
+const Request_URL = "https://university-portal-backend-production.up.railway.app/api/submit_request";
 
 export default function Request_Account() {
-      const [error, setError] = useState<string | null>(null);
-      const [success, setSuccess] = useState<string | null>(null);
-      const [loading, setLoading] = useState(false); // Add loading state
-      const router = useRouter();
-  
-      async function handleRequest(event: React.FormEvent<HTMLFormElement>) {
-          event.preventDefault();   
-          setLoading(true); // Set loading to true when starting login
-          setError(null); // Clear previous errors
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-          const formData = new FormData(event.target as HTMLFormElement);
-          const formObject = Object.fromEntries(formData);
-          const requestData = {
-              name: formObject.fullName,
-              email: formObject.academicEmail,
-              phone_number: formObject.phoneNumber,
-              Seat_Number: formObject.seatNumber,
-              level: formObject.level,
-              department: formObject.department,
-          };
-          
-          const requestOptions = {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(requestData),
-          };
-          try {
-              const response = await fetch(Request_URL, requestOptions);
-              const rData = await response.json();
+  async function handleRequest(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoading(true);
+    setError(null);
 
-              if(response.ok){
-                setError(null);
-                setSuccess("Request successful! Redirecting...");
-                
-                // Add a small delay to show success message
-                setTimeout(() => {
-                    router.push('/');
-                }, 3000);
-              }
-              else{
-                  if (response.status === 409) {
-                      setError("An account with this data already exists.");
-                  } else if (response.status === 404) {
-                      setError("Server not found. Please try again later.");
-                  } else {
-                      setError(rData.error || "Something went wrong.");
-                  }
-                  setSuccess(null);
-              }
-          }
-          catch (err){
-              console.error("Login error:", err);
-              setError("Network error. Please check your connection.");
-              setSuccess(null);
-          }
-          finally {
-              setLoading(false); // Reset loading state
-          }
+    const formData = new FormData(event.currentTarget);
+    const formObject = Object.fromEntries(formData);
+    const requestData = {
+      name: formObject.fullName,
+      email: formObject.academicEmail,
+      phone_number: formObject.phoneNumber,
+      Seat_Number: formObject.seatNumber,
+      level: formObject.level,
+      department: formObject.department,
+    };
+
+    try {
+      const response = await fetch(Request_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestData),
+      });
+
+      const rData = await response.json();
+
+      if (response.ok) {
+        setError(null);
+        setSuccess("Request successful! Redirecting...");
+        setTimeout(() => router.push('/'), 3000);
+      } else {
+        if (response.status === 409) {
+          setError("An account with this data already exists.");
+        } else if (response.status === 404) {
+          setError("Server not found. Please try again later.");
+        } else {
+          setError(rData.error || "Something went wrong.");
+        }
+        setSuccess(null);
       }
-
-
- {/*} const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFileName(file.name);
-    } else {
-      setSelectedFileName(null);
+    } catch (err) {
+      console.error("Request error:", err);
+      setError("Network error. Please check your connection.");
+      setSuccess(null);
+    } finally {
+      setLoading(false);
     }
-  };*/}
+  }
 
   return (
-    <div className="Registration_container">
-      
-      
-      <header className="header">
-        <div className="logo">
-          <h1>🎓 University Portal - Student Registration</h1>
-        </div>
-      </header>
+    <div className="registration-page">
+      <div className="registration-container">
+        <header className="registration-header">
+          <div className="header-content">
+            <h1>🎓 University Portal - Student Registration</h1>
+            <p>Create your student account to access the academic portal</p>
+          </div>
+        </header>
 
-      <main className="main-content">
+        <main className="registration-main">
+          <div className="registration-card">
+            <div className="card-header">
+              <h2>Student Registration</h2>
+              <p>Fill in your details to request an account</p>
+            </div>
 
-        <div className="form-container">
-          <h2 className="text-center mb-3">Student Request Account</h2>
-          <div id="loginAlert" className="alert hidden"></div>
-          <form id="studentRequestForm" onSubmit={handleRequest}>
-          <div className="form-group">
-                <label htmlFor="fullName">Full Name</label>
-                <input type="text" id="fullName" name="fullName" required />
+            <div className="card-body">
+              {/* Alert Messages */}
+              {error && (
+                <div className="alert alert-error">
+                  <span className="alert-icon">⚠️</span>
+                  <span className="alert-message">{error}</span>
+                </div>
+              )}
+
+              {success && (
+                <div className="alert alert-success">
+                  <span className="alert-icon">✅</span>
+                  <span className="alert-message">{success}</span>
+                </div>
+              )}
+
+              <form className="registration-form" onSubmit={handleRequest}>
+                <div className="form-group">
+                  <label htmlFor="fullName">Full Name</label>
+                  <div className="input-wrapper">
+                    <span className="input-icon">👤</span>
+                    <input
+                      type="text"
+                      id="fullName"
+                      name="fullName"
+                      placeholder="Enter your full name"
+                      required
+                      disabled={loading}
+                      className={loading ? 'loading' : ''}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="academicEmail">Academic Email</label>
+                  <div className="input-wrapper">
+                    <span className="input-icon">📧</span>
+                    <input
+                      type="email"
+                      id="academicEmail"
+                      name="academicEmail"
+                      placeholder="your.email@university.edu"
+                      required
+                      disabled={loading}
+                      className={loading ? 'loading' : ''}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="phoneNumber">Phone Number</label>
+                    <div className="input-wrapper">
+                      <span className="input-icon">📱</span>
+                      <input
+                        type="text"
+                        id="phoneNumber"
+                        name="phoneNumber"
+                        placeholder="Your phone number"
+                        required
+                        disabled={loading}
+                        className={loading ? 'loading' : ''}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="seatNumber">Seat Number</label>
+                    <div className="input-wrapper">
+                      <span className="input-icon">🎯</span>
+                      <input
+                        type="text"
+                        id="seatNumber"
+                        name="seatNumber"
+                        placeholder="Your seat number"
+                        required
+                        disabled={loading}
+                        className={loading ? 'loading' : ''}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="level">Level</label>
+                    <div className="input-wrapper">
+                      <span className="input-icon">📚</span>
+                      <select id="level" name="level" required disabled={loading}>
+                        <option value="">-- Select your level --</option>
+                        <option value="First Level">First level</option>
+                        <option value="Second Level">Second level</option>
+                        <option value="Third Level">Third level</option>
+                        <option value="Fourth Level">Fourth level</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="department">Department</label>
+                    <div className="input-wrapper">
+                      <span className="input-icon">🏢</span>
+                      <select id="department" name="department" required disabled={loading}>
+                        <option value="">-- Select Department --</option>
+                        <option value="Information Technology">Information Technology</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Information Software">Information Software</option>
+                        <option value="Multi media">Multi media</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className={`btn btn-primary ${loading ? 'loading' : ''}`}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <span className="btn-spinner"></span>
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <span>Request Account</span>
+                      <span className="btn-arrow">→</span>
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
+
+            <div className="card-footer">
+              <div className="divider">
+                <span>Already have an account?</span>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="academicEmail">Academic Email</label>
-                <input type="email" id="academicEmail" name="academicEmail" required />
+              <div className="footer-links">
+                <a href="/login" className="link-primary">
+                  <span className="link-icon">🔑</span>
+                  Sign In to Portal
+                </a>
+
+                <a href="/" className="link-secondary">
+                  <span className="link-icon">←</span>
+                  Back to Home
+                </a>
               </div>
-
-              <div className="form-group">
-                <label htmlFor="phoneNumber">Phone Number</label>
-                <input type="text" id="phoneNumber" name="phoneNumber" required />
-              </div>
-
-
-              <div className="form-group">
-                <label htmlFor="seatNumber">Seat Number</label>
-                <input type="text" id="seatNumber" name="seatNumber" required />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="level">Level</label>
-                <select id="level" name="level" required>
-                  <option value="">-- Select your level --</option>
-                  <option value="First Level">First level</option>
-                  <option value="Second Level">Second level</option>
-                  <option value="Third Level">Third level</option>
-                  <option value="FOurth Level">Fourth level</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="department">Department</label>
-                <select id="department" name="department" required>
-                  <option value="">-- Select Department --</option>
-                  <option value="Information Technology">Information Technology</option>
-                  <option value="Computer Science">Computer Science</option>
-                  <option value="Information Software">Information Software</option>
-                  <option value="Multi media">Multi media</option>
-                </select>
-              </div>
-              {/*
-              <div className="form-group">
-                <label htmlFor="myFile" style={{ display: 'block', marginBottom: '8px', fontWeight: 600 }}>
-                  Upload ID card
-                </label>
-
-                <input
-                  type="file"
-                  id="myFile"
-                  name="filename"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  style={{ display: 'none' }}
-                  required 
-                />
-
-                <label htmlFor="myFile" className="btn" style={{ display: 'inline-block', cursor: 'pointer' }}>
-                  {selectedFileName ? selectedFileName : 'Choose file'}
-                </label>
-              </div>
-              */}
-
-
-            <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
-              {loading ? "loading" : "Request account"}
-            </button>
-          </form>
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            {success && <p style={{ color: "green" }}>{success}</p>}
-        </div>
-      </main>
-
-
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

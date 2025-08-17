@@ -4,21 +4,54 @@ import { useEffect, useState, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 import dynamic from 'next/dynamic';
-import './userD.css';
+import './userD.css'; // dashboard styles
 
 // Dynamic imports to prevent SSR issues
 const UserComplaints = dynamic(() => import('@/Components/UserComplaints'), {
-  loading: () => <div>Loading complaints...</div>,
+  loading: () => (
+    <div style={{ 
+      display: 'flex', 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      height: '200px',
+      fontSize: '1.1rem',
+      color: '#667eea'
+    }}>
+      Loading complaints...
+    </div>
+  ),
   ssr: false
 });
 
 const UserSuggestions = dynamic(() => import('@/Components/UserSuggestions'), {
-  loading: () => <div>Loading suggestions...</div>,
+  loading: () => (
+    <div style={{ 
+      display: 'flex', 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      height: '200px',
+      fontSize: '1.1rem',
+      color: '#667eea'
+    }}>
+      Loading suggestions...
+    </div>
+  ),
   ssr: false
 });
 
 const UserTracking = dynamic(() => import('@/Components/UserTracking'), {
-  loading: () => <div>Loading tracking...</div>,
+  loading: () => (
+    <div style={{ 
+      display: 'flex', 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      height: '200px',
+      fontSize: '1.1rem',
+      color: '#667eea'
+    }}>
+      Loading tracking...
+    </div>
+  ),
   ssr: false
 });
 
@@ -75,33 +108,61 @@ function DashboardContent() {
       case 1: return <UserComplaints decoded={user} />;
       case 2: return <UserSuggestions decoded={user} />;
       case 3: return <UserTracking />;
-      case 4: return <div>Chat Support - Coming Soon</div>;
+      case 4: return (
+        <div style={{
+          textAlign: 'center',
+          padding: '3rem',
+          color: '#6b7280',
+          fontSize: '1.2rem'
+        }}>
+          <div style={{
+            fontSize: '3rem',
+            marginBottom: '1rem'
+          }}>💬</div>
+          <h3 style={{ marginBottom: '1rem', color: '#374151' }}>Chat Support</h3>
+          <p>Coming Soon - AI-powered chat support will be available here!</p>
+        </div>
+      );
       default: return null;
     }
   };
 
   if (!authorized) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh',
-        fontSize: '18px'
-      }}>
-        Checking authorization...
+      <div className="loading-state">
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem'
+        }}>
+          <div style={{
+            width: '20px',
+            height: '20px',
+            border: '2px solid rgba(255,255,255,0.3)',
+            borderTop: '2px solid white',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }}></div>
+          Checking authorization...
+        </div>
+        <style jsx>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
       </div>
     );
   }
 
   return (
-    <div className="container">
+    <div className="dashboard-container">
       <div className="dashboard-header">
         <div>
-          <h2>Student Dashboard</h2>
-          <p>Welcome, <span id="studentName">{studentName}</span></p>
+          <h2>🎓 Student Dashboard</h2>
+          <p>Welcome back, <span style={{ fontWeight: '600' }}>{studentName}</span>!</p>
         </div>
-        <button className="btn btn-primary" onClick={handleLogout}>
+        <button className="btn btn-logout" onClick={handleLogout}>
           Logout
         </button>
       </div>
@@ -155,14 +216,28 @@ function DashboardContent() {
 export default function TabsPage() {
   return (
     <Suspense fallback={
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh',
-        fontSize: '18px'
-      }}>
-        Loading dashboard...
+      <div className="loading-state">
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem'
+        }}>
+          <div style={{
+            width: '20px',
+            height: '20px',
+            border: '2px solid rgba(255,255,255,0.3)',
+            borderTop: '2px solid white',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }}></div>
+          Loading dashboard...
+        </div>
+        <style jsx>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
       </div>
     }>
       <DashboardContent />

@@ -19,12 +19,28 @@
   }
 }
 
+/* Global reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
-
-  background: linear-gradient(to bottom, #667eea, #764ba2);
+  font-family: var(--font-sans), "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
 }
 
+/* Remove the forced grey background to let component styles take precedence */
+html, body {
+  height: 100%;
+}
+
+/* Smooth scrolling for better UX */
+html {
+  scroll-behavior: smooth;
+}

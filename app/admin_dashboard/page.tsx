@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { jwtDecode } from 'jwt-decode'; // Fixed import name
+import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
 
 import AdminComplaints from '@/Components/AdminComplaints';
@@ -16,7 +16,7 @@ export default function TabsPage() {
     const [AdminName, setAdminName] = useState('Admin');
     const router = useRouter();
 
-        useEffect(() => {
+    useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
             router.push('/login_admin');
@@ -59,82 +59,107 @@ export default function TabsPage() {
         localStorage.removeItem('token');
         router.push('/login_admin');
     };
-  const renderContent = () => {
-    switch (activeTab) {
-      case 1: return <AdminComplaints/>;
-      case 2: return <AdminSuggestions/>;
-      case 3: return <AdminRequests/>;
-      default: return null;
+
+    const renderContent = () => {
+        switch (activeTab) {
+            case 1: return <AdminComplaints/>;
+            case 2: return <AdminSuggestions/>;
+            case 3: return <AdminRequests/>;
+            case 4: return (
+                <div style={{
+                    textAlign: 'center',
+                    padding: '3rem'
+                }}>
+
+                </div>
+            );
+            default: return null;
+        }
+    };
+
+    if (!authorized) {
+        return (
+            <div className="loading-state">
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem'
+                }}>
+                    <div style={{
+                        width: '20px',
+                        height: '20px',
+                        border: '2px solid rgba(255,255,255,0.3)',
+                        borderTop: '2px solid white',
+                        borderRadius: '50%',
+                        animation: 'spin 1s linear infinite'
+                    }}></div>
+                    Checking authorization...
+                </div>
+                <style jsx>{`
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                `}</style>
+            </div>
+        );
     }
-  };
-  if (!authorized) {
-      return (
-          <div style={{ 
-              display: 'flex', 
-              justifyContent: 'center', 
-              alignItems: 'center', 
-              height: '100vh',
-              fontSize: '18px'
-          }}>
-              Checking authorization...
-          </div>
-      );
-  }
-  return (
-    <div className="container">
-        <div className="dashboard-header">
+
+    return (
+        <div className="container">
+            <div className="dashboard-header">
                 <div>
-                    <h2>Student Dashboard</h2>
-                    <p>Welcome, <span id="AdminName">{AdminName}</span></p>
+                    <h2>👨‍💼 Admin Dashboard</h2>
+                    <p>Welcome back, <span style={{ fontWeight: '600' }}>{AdminName}</span>!</p>
                 </div>
 
-          <button className="btn btn-primary" onClick={handleLogout}>
-            Logout
-          </button>
+                <button className="btn btn-danger" onClick={handleLogout}>
+                    Logout
+                </button>
+            </div>
 
+            <div className="tab-buttons">
+                <nav className="dashboard-nav">
+                    <ul className="nav-tabs">
+                        <li className="nav-tab">
+                            <button
+                                className={`nav-button ${activeTab === 1 ? 'active' : ''}`}
+                                onClick={() => setActiveTab(1)}
+                            >
+                                Complaints
+                            </button>
+                        </li>
+                        <li className="nav-tab">
+                            <button
+                                className={`nav-button ${activeTab === 2 ? 'active' : ''}`}
+                                onClick={() => setActiveTab(2)}
+                            >
+                                Suggestions
+                            </button>
+                        </li>
+                        <li className="nav-tab">
+                            <button
+                                className={`nav-button ${activeTab === 3 ? 'active' : ''}`}
+                                onClick={() => setActiveTab(3)}
+                            >
+                                Requests
+                            </button>
+                        </li>
+                        <li className="nav-tab">
+                            <button
+                                className={`nav-button ${activeTab === 4 ? 'active' : ''}`}
+                                onClick={() => setActiveTab(4)}
+                            >
+                                Statistics
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div className="tab-content">
+                {renderContent()}
+            </div>
         </div>
-      <div className="tab-buttons">
-        <nav className="dashboard-nav">
-                <ul className="nav-tabs">
-                  <li className="nav-tab">
-                    <button
-                      className={`nav-button ${activeTab === 1 ? 'active' : ''}`}
-                      onClick={() => setActiveTab(1)}
-                    >
-                        Complaints
-                    </button>
-                  </li>
-                  <li className="nav-tab">
-                    <button
-                      className={`nav-button ${activeTab === 2 ? 'active' : ''}`}
-                      onClick={() => setActiveTab(2)}
-                    >
-                        Suggestions
-                    </button>
-                  </li>
-                  <li className="nav-tab">
-                    <button
-                      className={`nav-button ${activeTab === 3 ? 'active' : ''}`}
-                      onClick={() => setActiveTab(3)}
-                    >
-                        Requests
-                    </button>
-                  </li>
-                  <li className="nav-tab">
-                    <button
-                      className={`nav-button ${activeTab === 4 ? 'active' : ''}`}
-                      onClick={() => setActiveTab(4)}
-                    >
-                      Statistcs
-                    </button>
-                  </li>
-                </ul>
-              </nav>
-      </div>
-
-      <div className="tab-content">
-        {renderContent()}
-      </div>
-    </div>
-  );
+    );
 }
