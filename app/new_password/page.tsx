@@ -1,20 +1,21 @@
 "use client"
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import './newPassword.css';
 
 const Request_URL = "http://127.0.0.1:8001/api/new_password"
 
-export default function New_Password() {
-
+// Separate component that uses useSearchParams
+function NewPasswordForm() {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const searchParams = useSearchParams();
     const token = searchParams.get('token');
+
     async function handleReset(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();   
         setLoading(true); // Set loading to true when starting login
@@ -73,7 +74,6 @@ export default function New_Password() {
     }
 
     function checkPassword(event: React.FormEvent<HTMLFormElement>){
-
       const formData = new FormData(event.target as HTMLFormElement);
       const formObject = Object.fromEntries(formData);
       const password = formObject.password as string;
@@ -82,47 +82,64 @@ export default function New_Password() {
       return compareValue === 0;
     }
 
-
-
-
-
-
-  return (
-    <div className="Login-container">
-      <header className="header">
-        <div className="logo">
-          <h1>🎓 University Portal</h1>
-        </div>
-      </header>
-
-      <main className="main-content">
-        <div className="form-container">
-          <h2 className="text-center mb-3">Reset your password</h2>
-
-          <div id="loginAlert" className="alert hidden"></div>
-
-          <form id="studentLoginForm" onSubmit={handleReset}>
-            <div className="form-group">
-              <label htmlFor="password"> Enter a new password:</label>
-              <input type="password" id="password" name="password" required />
+    return (
+        <div className="Login-container">
+          <header className="header">
+            <div className="logo">
+              <h1>🎓 University Portal</h1>
             </div>
+          </header>
 
-            <div className="form-group">
-              <label htmlFor="passwordConfirmation">Enter your password again:</label>
-              <input type="password" id="passwordConfirmation" name="passwordConfirmation" autoComplete='new-password' required />
+          <main className="main-content">
+            <div className="form-container">
+              <h2 className="text-center mb-3">Reset your password</h2>
+
+              <div id="loginAlert" className="alert hidden"></div>
+
+              <form id="studentLoginForm" onSubmit={handleReset}>
+                <div className="form-group">
+                  <label htmlFor="password"> Enter a new password:</label>
+                  <input type="password" id="password" name="password" required />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="passwordConfirmation">Enter your password again:</label>
+                  <input type="password" id="passwordConfirmation" name="passwordConfirmation" autoComplete='new-password' required />
+                </div>
+
+                <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
+                  {loading ? "loading..." : "Confirm"}
+                </button>
+              </form>
+
+              <div className="text-center mt-3">
+              </div>
+                {error && (<p style={{ color: "red" }} dangerouslySetInnerHTML={{ __html: error }}/>)}
+                {success && <p style={{ color: "green" }}>{success}</p>}
             </div>
-
-            <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
-              {loading ? "loading..." : "Confirm"}
-            </button>
-          </form>
-
-          <div className="text-center mt-3">
-          </div>
-            {error && (<p style={{ color: "red" }} dangerouslySetInnerHTML={{ __html: error }}/>)}
-            {success && <p style={{ color: "green" }}>{success}</p>}
+          </main>
         </div>
-      </main>
-    </div>
-  );
+    );
+}
+
+// Main component that wraps the form in Suspense
+export default function New_Password() {
+    return (
+        <Suspense fallback={
+            <div className="Login-container">
+                <header className="header">
+                    <div className="logo">
+                        <h1>🎓 University Portal</h1>
+                    </div>
+                </header>
+                <main className="main-content">
+                    <div className="form-container">
+                        <h2 className="text-center mb-3">Loading...</h2>
+                    </div>
+                </main>
+            </div>
+        }>
+            <NewPasswordForm />
+        </Suspense>
+    );
 }
