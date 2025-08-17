@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import './Login.css';
 
-const LOGIN_URL = "http://127.0.0.1:8001/api/login_admin"
+const LOGIN_URL = "https://university-portal-backend-production.up.railway.app/api/login_admin"
 
 export default function Login_Admin() {
 
