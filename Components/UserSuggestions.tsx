@@ -6,7 +6,14 @@ import Link from 'next/link';
 
 const add_suggs_URL = "http://127.0.0.1:8001/api/compsuggs/submit_suggestion"
 
-export default function userSuggestions({decoded}) {
+interface DecodedProps {
+  decoded: {
+    id: number;
+    // add other properties if needed
+  };
+}
+
+export default function userSuggestions({ decoded }: DecodedProps) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -25,7 +32,7 @@ export default function userSuggestions({decoded}) {
       department: formObject.department,
       subject: formObject.subject,
       suggestion_content: formObject.suggestion_content,
-      student: parseInt(decoded.id),
+      student: decoded.id,
     }
     const requestOptions = {
       method:'POST',
@@ -40,7 +47,7 @@ export default function userSuggestions({decoded}) {
       if(response.ok){
         setError(null);
         setSuccess("Suggestion submitted successfully");
-        event.target.reset();
+        (event.target as HTMLFormElement).reset();
       }
       else{
           if (response.status === 409) {

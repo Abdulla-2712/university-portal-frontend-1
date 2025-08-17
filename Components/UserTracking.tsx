@@ -2,10 +2,9 @@
 import React, { useEffect, useState } from 'react'
 import TrackingCompsCard from './UserTrackingCards'
 import { jwtDecode } from 'jwt-decode'; // Fixed import name
-
+import {Complaint} from './types';
 export default function ComplaintsTab() {
-  const [complaints, setComplaints] = useState([])
-
+  const [complaints, setComplaints] = useState<Complaint[]>([]);
 
 
   useEffect(() =>{
@@ -39,11 +38,17 @@ export default function ComplaintsTab() {
   return (
     <div className="dashboard-content">
       {complaints.length === 0 ? (
-        <p>No complaints submitted yet.</p>
+      <p>No complaints submitted yet.</p>
       ) : (
-        complaints.map((complaint) => (
-          <TrackingCompsCard key={complaint.id} complaint={complaint} />
-        ))
+      complaints.map((complaint) => (
+        <TrackingCompsCard
+        key={complaint.id}
+        complaint={{
+          ...complaint,
+          content: complaint.complaint_content // Map complaint_content to content if needed
+        }}
+        />
+      ))
       )}
     </div>
   )

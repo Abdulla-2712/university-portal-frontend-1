@@ -1,9 +1,10 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import AdminComplaintsCard from './AdminSuggestionCard'
+import {Suggestion} from './types';
 
 export default function SuggestionsAdminTab() {
-  const [suggestion, setSuggestion] = useState([])
+  const [suggestion, setSuggestion] = useState<Suggestion[]>([]);
 
   useEffect(() => {
     const token = localStorage.getItem('token');

@@ -6,7 +6,13 @@ import Link from 'next/link';
 
 const add_comp_URL = "http://127.0.0.1:8001/api/compsuggs/submit_complaint"
 
-export default function UserComplaints({decoded}){
+interface DecodedProps {
+  decoded: {
+    id: number | string;
+  };
+}
+
+export default function UserComplaints({ decoded }: DecodedProps) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -27,7 +33,7 @@ export default function UserComplaints({decoded}){
       subject: formObject.subject,
       complaint_content: formObject.complaint_content,
       priority_level: formObject.prioritylevel, // Fixed: Use mapped value
-      student: parseInt(decoded.id), // Fixed: Ensure it's an integer
+      student: parseInt(decoded.id.toString()), // Fixed: Ensure it's an integer
     };
 
     console.log('Sending request data:', requestData); // Debug log

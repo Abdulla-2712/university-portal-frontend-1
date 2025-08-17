@@ -2,13 +2,15 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Request } from './types'
 import AdminRequestsCard from './AdminRequestsCard'
 import RespondModal from '@/Components/Modals/RespondModal'
 const add_user_URL = "http://127.0.0.1:8001/api/add_user"
 
 
+
 export default function AdminRequests() {
-  const [requests, setRequests] = useState([]);
+  const [requests, setRequests] = useState<Request[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -92,7 +94,7 @@ async function adding_user(event: React.FormEvent<HTMLFormElement>){
       ) : (
         requests.map((requests) => (
           <AdminRequestsCard key={requests.id} requests={requests}
-            onDelete={(id) => {
+            onDelete={(id: number) => {
               setRequests(prev => prev.filter(requests => requests.id !== id));
             }}
         />

@@ -8,7 +8,16 @@ const stat_URL = "http://127.0.0.1:8001/api/compsuggs/change_status_sugs"
 const answer_URL = "http://127.0.0.1:8001/api/compsuggs/answer_suggestion"
 
 
-export default function adminSuggestionsCard({ suggestion }) {
+type Suggestion = {
+    id: number;
+    subject: string;
+    status: string;
+    department: string;
+    suggestion_content: string;
+    suggestion_answer?: string;
+};
+
+export default function adminSuggestionsCard({ suggestion }: { suggestion: Suggestion }) {
     const {
         id,
         subject,

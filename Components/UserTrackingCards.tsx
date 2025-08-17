@@ -1,7 +1,21 @@
 // components/TrackingCompsCard.jsx
 import React from 'react'
 
-export default function TrackingCompsCard({ complaint }) {
+interface Complaint {
+  id: number | string;
+  department: string;
+  subject: string;
+  priority_level?: string;
+  content: string;
+  answer?: string;
+  status: string;
+}
+
+interface TrackingCompsCardProps {
+  complaint: Complaint;
+}
+
+export default function TrackingCompsCard({ complaint }: TrackingCompsCardProps) {
   const {
     id,
     department,
