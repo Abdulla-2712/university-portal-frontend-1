@@ -111,7 +111,7 @@ function NewPasswordForm() {
                         marginBottom: '2rem',
                         fontSize: '1rem'
                     }}>
-                        Enter your new password below. Make sure it's secure!
+                        Enter your new password below. Make sure it&apos;s secure!
                     </p>
 
                     <form onSubmit={handleReset}>
