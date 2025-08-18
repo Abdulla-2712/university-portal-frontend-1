@@ -27,13 +27,14 @@ export default function UserComplaints({ decoded }: DecodedProps) {
     const formData = new FormData(event.target as HTMLFormElement);
     const formObject = Object.fromEntries(formData);
     
-    
+
     const requestData = {
       department: formObject.department,
       subject: formObject.subject,
       complaint_content: formObject.complaint_content,
       priority_level: formObject.prioritylevel, // Fixed: Use mapped value
-      student: parseInt(decoded.id.toString()), // Fixed: Ensure it's an integer
+    student: Number(decoded.id),   // force it to integer
+
     };
 
     console.log('Sending request data:', requestData); // Debug log
