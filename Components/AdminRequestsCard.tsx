@@ -2,8 +2,8 @@
 import React, { useState } from 'react'
 
 // Fixed API URLs based on your Django routing
-const ADD_USER_URL = "https://university-portal-backend-production.up.railway.app/add_user"
-const DELETE_REQUEST_URL = "https://university-portal-backend-production.up.railway.app"
+const ADD_USER_URL = "https://university-portal-backend-production.up.railway.app/api/add_user"
+const DELETE_REQUEST_URL = "https://university-portal-backend-production.up.railway.app/api"
 
 type Request = {
   id: number;
