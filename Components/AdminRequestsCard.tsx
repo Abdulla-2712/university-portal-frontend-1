@@ -1,9 +1,7 @@
-// components/AdminRequestsCard.tsx
-import React, { useState } from 'react'
+// components/TrackingCompsCard.jsx
+import React, { useEffect, useState } from 'react'
 
-// Fixed API URLs based on your Django routing
-const ADD_USER_URL = "https://university-portal-backend-production.up.railway.app/api/add_user"
-const DELETE_REQUEST_URL = "https://university-portal-backend-production.up.railway.app/api"
+const add_user_URL = "https://university-portal-backend-production.up.railway.app/api/add_user"
 
 type Request = {
   id: number;
@@ -20,12 +18,11 @@ interface AdminRequestsCardProps {
   onDelete?: (id: number) => void;
 }
 
-export default function AdminRequestsCard({requests, onDelete}: AdminRequestsCardProps) {
+export default function AdminRequestsCard({requests, onDelete}: AdminRequestsCardProps){
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
-
+  
   const {
     id,
     FullName,
@@ -36,123 +33,70 @@ export default function AdminRequestsCard({requests, onDelete}: AdminRequestsCar
     Department,
   } = requests
 
-  async function handleAccept(event: React.MouseEvent<HTMLButtonElement>) {
-    event.preventDefault();
-    
-    if (isProcessing || loading) return;
-    
-    setIsProcessing(true);
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-    
+
+  async function handleAccept(event: React.MouseEvent<HTMLButtonElement>){
+    event.preventDefault();   
     const requestData = {
-      name: FullName,
-      email: AcademicEmail,
-      phone_number: PhoneNumber,
-      Seat_Number: SeatNumber,
-      level: Level,
-      department: Department
+      name: requests.FullName,
+      email: requests.AcademicEmail,
+      phone_number: requests.PhoneNumber,
+      Seat_Number: requests.SeatNumber,
+      level: requests.Level,
+      department: requests.Department
     };
-    
-    console.log('Sending request to:', ADD_USER_URL);
-    console.log('Request data:', requestData);
-    
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+      'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestData),
+    };
     try {
-      const response = await fetch(ADD_USER_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData),
-      });
-      
-      console.log('Response status:', response.status);
+      const response = await fetch(add_user_URL, requestOptions);
       const rData = await response.json();
-      console.log('Response data:', rData);
-      
-      if (response.ok) {
+      if(response.ok){
         setError(null);
-        
-        // Check if email was sent successfully
-        if (rData.email_sent === false) {
-          setSuccess("Account added successfully! (Note: Welcome email failed to send)");
-        } else {
-          setSuccess("Account added successfully!");
-        }
-        
-        // Now delete the request
-        await deleteRequest(id);
-        
-      } else {
-        if (response.status === 409) {
-          setError("An account with this data already exists.");
-        } else if (response.status === 404) {
-          setError("Server endpoint not found. Please check the API.");
-        } else {
-          setError(rData.error || rData.message || "Something went wrong.");
-        }
+        setSuccess("Account added successfully");
+        setTimeout(() => {
+          setSuccess(null);
+          handleDelete(requests.id);
+
+        }, 2000);
+      }
+      else{
+        setError(rData.error || "Something went wrong.");
         setSuccess(null);
       }
-    } catch (err) {
-      console.error("Accept error:", err);
-      setError("Network error. Please check your connection and API endpoint.");
+    }
+    catch (err){
+      console.error("Login error:", err);
+      setError("Network error. Please check your connection.");
       setSuccess(null);
-    } finally {
-      setLoading(false);
-      setIsProcessing(false);
+    }
+    finally {
+      setLoading(false); // Reset loading state
     }
   }
 
-  const deleteRequest = async (requestId: number) => {
-    try {
-      console.log('Deleting request ID:', requestId);
-      const deleteUrl = `${DELETE_REQUEST_URL}/delete_request/${requestId}`;
-      console.log('Delete URL:', deleteUrl);
-      
-      const res = await fetch(deleteUrl, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
+const handleDelete = async (id: number) => {
+  try {
+    const res = await fetch(`https://university-portal-backend-production.up.railway.app/api/delete_request/${id}`, {
+      method: 'DELETE',
+    });
 
-      console.log('Delete response status:', res.status);
-      
-      if (!res.ok) {
-        const errorData = await res.json();
-        console.log('Delete error data:', errorData);
-        throw new Error(`Failed to delete: ${res.status}`);
-      }
-
-      const deleteData = await res.json();
-      console.log('Delete success data:', deleteData);
-
+    if (!res.ok) {
+      throw new Error('Failed to delete');
+    }
       if (onDelete) {
-        onDelete(requestId);
+        onDelete(id); // tell the parent to remove this card
       }
-      
-    } catch (error) {
-      console.error('Delete error:', error);
-      setError("Failed to remove request from list. Please refresh the page.");
-    }
-  };
+      } catch (error) {
+        setError("Network error. Please check your connection.");
+        console.error('Delete error:', error);
+  }
 
-  const handleReject = async () => {
-    if (loading || isProcessing) return;
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      await deleteRequest(id);
-      setSuccess("Request rejected successfully.");
-    } catch (error) {
-      setError("Failed to reject request.");
-    } finally {
-      setLoading(false);
-    }
-  };
+};
+
 
   return (
     <div className="card">
@@ -167,27 +111,23 @@ export default function AdminRequestsCard({requests, onDelete}: AdminRequestsCar
         <p><strong>Seat Number:</strong> {SeatNumber}</p>
         <p><strong>Department:</strong> {Department}</p>
         <p><strong>Level:</strong> {Level}</p>
-        
         <div className="flex gap-4 mt-4">
-          <button 
-            className={`btn btn-primary ${loading || isProcessing ? 'loading' : ''}`}
-            onClick={handleAccept}
-            disabled={loading || isProcessing}
-          >
-            {loading ? 'Processing...' : 'Accept'}
+          <button className="btn btn-primary" onClick={handleAccept}>
+          Accept
           </button>
-          <button 
-            className={`btn btn-secondary ${loading ? 'loading' : ''}`}
-            onClick={handleReject}
-            disabled={loading || isProcessing}
-          >
-            {loading ? 'Rejecting...' : 'Reject'}
+          <button className="btn btn-secondary" onClick={() => handleDelete(requests.id)}>
+          Reject
           </button>
         </div>
-        
-        {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
-        {success && <p style={{ color: "green", marginTop: "10px" }}>{success}</p>}
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            {success && <p style={{ color: "green" }}>{success}</p>}
       </div>
     </div>
+
+
+
+
+
+
   );
-}
+};
