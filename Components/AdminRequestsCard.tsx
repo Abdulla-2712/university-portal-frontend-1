@@ -1,7 +1,9 @@
 // components/AdminRequestsCard.tsx
 import React, { useState } from 'react'
 
-const add_user_URL = "https://university-portal-backend-production.up.railway.app/api/add_user"
+// Fixed API URLs based on your Django routing
+const ADD_USER_URL = "https://university-portal-backend-production.up.railway.app/add_user"
+const DELETE_REQUEST_URL = "https://university-portal-backend-production.up.railway.app"
 
 type Request = {
   id: number;
@@ -22,7 +24,7 @@ export default function AdminRequestsCard({requests, onDelete}: AdminRequestsCar
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false); // Prevent double clicks
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const {
     id,
@@ -37,7 +39,6 @@ export default function AdminRequestsCard({requests, onDelete}: AdminRequestsCar
   async function handleAccept(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     
-    // Prevent multiple clicks
     if (isProcessing || loading) return;
     
     setIsProcessing(true);
@@ -46,44 +47,50 @@ export default function AdminRequestsCard({requests, onDelete}: AdminRequestsCar
     setSuccess(null);
     
     const requestData = {
-      name: requests.FullName,
-      email: requests.AcademicEmail,
-      phone_number: requests.PhoneNumber,
-      Seat_Number: requests.SeatNumber,
-      level: requests.Level,
-      department: requests.Department
+      name: FullName,
+      email: AcademicEmail,
+      phone_number: PhoneNumber,
+      Seat_Number: SeatNumber,
+      level: Level,
+      department: Department
     };
     
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestData),
-    };
+    console.log('Sending request to:', ADD_USER_URL);
+    console.log('Request data:', requestData);
     
     try {
-      const response = await fetch(add_user_URL, requestOptions);
+      const response = await fetch(ADD_USER_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      });
+      
+      console.log('Response status:', response.status);
       const rData = await response.json();
+      console.log('Response data:', rData);
       
       if (response.ok) {
         setError(null);
-        setSuccess("Account added successfully");
+        setSuccess("Account added successfully!");
         
-        // Delete from registration table immediately after successful addition
-        await handleDelete(requests.id, false); // false means don't show delete errors
+        // Now delete the request
+        await deleteRequest(id);
         
       } else {
         if (response.status === 409) {
           setError("An account with this data already exists.");
+        } else if (response.status === 404) {
+          setError("Server endpoint not found. Please check the API.");
         } else {
-          setError(rData.error || "Something went wrong.");
+          setError(rData.error || rData.message || "Something went wrong.");
         }
         setSuccess(null);
       }
     } catch (err) {
       console.error("Accept error:", err);
-      setError("Network error. Please check your connection.");
+      setError("Network error. Please check your connection and API endpoint.");
       setSuccess(null);
     } finally {
       setLoading(false);
@@ -91,31 +98,54 @@ export default function AdminRequestsCard({requests, onDelete}: AdminRequestsCar
     }
   }
 
-  const handleDelete = async (id: number, showErrors: boolean = true) => {
+  const deleteRequest = async (requestId: number) => {
     try {
-      const res = await fetch(`https://university-portal-backend-production.up.railway.app/api/delete_request/${id}`, {
+      console.log('Deleting request ID:', requestId);
+      const deleteUrl = `${DELETE_REQUEST_URL}/delete_request/${requestId}`;
+      console.log('Delete URL:', deleteUrl);
+      
+      const res = await fetch(deleteUrl, {
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }
       });
 
+      console.log('Delete response status:', res.status);
+      
       if (!res.ok) {
-        throw new Error('Failed to delete');
+        const errorData = await res.json();
+        console.log('Delete error data:', errorData);
+        throw new Error(`Failed to delete: ${res.status}`);
       }
 
+      const deleteData = await res.json();
+      console.log('Delete success data:', deleteData);
+
       if (onDelete) {
-        onDelete(id); // Remove card from parent component
+        onDelete(requestId);
       }
       
     } catch (error) {
-      if (showErrors) {
-        setError("Failed to delete request. Please try again.");
-      }
       console.error('Delete error:', error);
+      setError("Failed to remove request from list. Please refresh the page.");
     }
   };
 
-  const handleReject = () => {
+  const handleReject = async () => {
+    if (loading || isProcessing) return;
+    
     setLoading(true);
-    handleDelete(requests.id).finally(() => setLoading(false));
+    setError(null);
+    
+    try {
+      await deleteRequest(id);
+      setSuccess("Request rejected successfully.");
+    } catch (error) {
+      setError("Failed to reject request.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -145,12 +175,12 @@ export default function AdminRequestsCard({requests, onDelete}: AdminRequestsCar
             onClick={handleReject}
             disabled={loading || isProcessing}
           >
-            {loading ? 'Deleting...' : 'Reject'}
+            {loading ? 'Rejecting...' : 'Reject'}
           </button>
         </div>
         
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {success && <p style={{ color: "green" }}>{success}</p>}
+        {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
+        {success && <p style={{ color: "green", marginTop: "10px" }}>{success}</p>}
       </div>
     </div>
   );
