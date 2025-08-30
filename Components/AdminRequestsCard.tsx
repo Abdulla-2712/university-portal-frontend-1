@@ -73,7 +73,13 @@ export default function AdminRequestsCard({requests, onDelete}: AdminRequestsCar
       
       if (response.ok) {
         setError(null);
-        setSuccess("Account added successfully!");
+        
+        // Check if email was sent successfully
+        if (rData.email_sent === false) {
+          setSuccess("Account added successfully! (Note: Welcome email failed to send)");
+        } else {
+          setSuccess("Account added successfully!");
+        }
         
         // Now delete the request
         await deleteRequest(id);
