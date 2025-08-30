@@ -32,9 +32,7 @@ export default function AdminRequestsCard({requests, onDelete}: AdminRequestsCar
     Level,
     Department,
   } = requests
-  function getDeleteUrl() {
-    return `https://university-portal-backend-production.up.railway.app/api/delete_request/${requests.id}`;
-  }
+
 
   async function handleAccept(event: React.MouseEvent<HTMLButtonElement>){
     event.preventDefault();   
